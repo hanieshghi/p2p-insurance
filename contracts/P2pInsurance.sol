@@ -8,11 +8,11 @@ contract P2pInsurance is Admin{
   mapping( uint => Insurance) public insurances; 
   mapping(address => User) private users; 
   mapping (address => bool) public insuredUsers;
-  mapping (address => bool) public enrolled;
+  // mapping (address => bool) public enrolled;
 
-  uint insuranceCount;
-  uint usersCount;
-  uint feeAmount;
+  uint public insuranceCount;
+  uint public usersCount;
+  // uint public feeAmount;
   
   
   struct User {
@@ -33,12 +33,16 @@ contract P2pInsurance is Admin{
     uint expireTime;
     Status status;
     uint investorPay;
-    uint clientPay; // todo calculate clientPay with math
-    address payable evaluator;
+    uint clientPay; 
+    address evaluator;
+    EvaluatorStatus evaluatorStatus;
   }
 
   enum Status {
     INIT , INPROCESS, FINISHED
+  }
+  enum EvaluatorStatus {
+    EMPTY ,ACCEPTED , REJECTED
   }
   
   
@@ -73,14 +77,13 @@ contract P2pInsurance is Admin{
   }
   modifier hasEnoughBalance(uint _price) {
       require(SafeMath.add(users[msg.sender].usableBalance , msg.value) >= _price);
-      _;
-      
+      _;   
   }
-  modifier isEnrolled() {
-      require(enrolled[msg.sender]);
-      _;
+  // modifier isEnrolled() {
+  //     require(enrolled[msg.sender]);
+  //     _;
       
-  }
+  // }
   
   modifier isNotInsured(address _address) {
       require(!insuredUsers[_address]);
@@ -93,25 +96,38 @@ contract P2pInsurance is Admin{
       _;   
   }
 
-modifier isNotExpired(uint insuranceId) {
+  modifier isNotExpired(uint insuranceId) {
       require(insurances[insuranceId].expireTime <= now);
       _;   
   }
 
-  modifier checkValue(uint _id) {
-    //refund them after pay for item (why it is before, _ checks for logic before func)
-    _;
-    uint amountToRefund = msg.value - feeAmount;
-    insurances[id].evaluator.transfer(amountToRefund);
+  modifier isExpired(uint insuranceId) {
+      require(insurances[insuranceId].expireTime > now);
+      _;   
   }
+
+  modifier isEmpty(uint insuranceId) {
+      require(insurances[insuranceId].evaluatorStatus == EvaluatorStatus.EMPTY);
+      _;   
+  }
+
+// todo its wrong
+  // modifier checkValue(uint _id) {
+  //   //refund them after pay for fee 
+  //   _;
+  //   uint amountToRefund = msg.value - feeAmount;
+  //   insurances[id].evaluator.transfer(amountToRefund);
+  // }
   
   constructor() public {
     insuranceCount = 0;
     usersCount = 0;
-    feeAmount = 100;
+    // feeAmount = 100;
   }
 
-  function addUser() public stopInEmergency returns ( bool){
+  /// @notice add new user
+  /// @dev This is internal and cannot be called from outside
+  function addUser() internal stopInEmergency{
     users[msg.sender] = User({
         user: msg.sender,
         id: usersCount,
@@ -120,17 +136,23 @@ modifier isNotExpired(uint insuranceId) {
         investsCount: 0,
         insuranceId: 0
     });
-    enrolled[msg.sender] = true;
+    // enrolled[msg.sender] = true;
     usersCount += 1;
     emit LogUserEnrolled(msg.sender);
-    return true;
   }
   
+  /// @notice Add new insurance request from client
+  /// @dev insuranceId 0 is skipped.
+  /// @param _duration amount you want to be insured
+  /// @param _clientPay amount you want to pay
+  /// @return the id of the new insurance
   function addNewRequest(uint _duration, uint _clientPay) public payable
   stopInEmergency
-  isEnrolled
-  hasEnoughBalance(_clientPay)
+  hasEnoughBalance(_clientPay) returns(uint)
   {
+    if(users[msg.sender].user == address(0)){
+      addUser();
+    }
       insuranceCount += 1;
       insurances[insuranceCount] = Insurance({
           id: insuranceCount,
@@ -142,7 +164,8 @@ modifier isNotExpired(uint insuranceId) {
           status: Status.INIT,
           investorPay: 0,
           clientPay: _clientPay,
-          evaluator: address(0)
+          evaluator: address(0),
+          evaluatorStatus: EvaluatorStatus.EMPTY
       });
       // todo calculate investorPay by duration and clientPay
       User storage user = users[msg.sender];
@@ -150,21 +173,27 @@ modifier isNotExpired(uint insuranceId) {
       user.lockedBalance += _clientPay;
       user.insuranceId = insuranceCount;
       emit LogNewRequest(msg.sender , insuranceCount , _duration );
+      return insuranceCount;
   }
   
-  function acceptAnRequestByInvestor(uint _id) public payable
+  /// @notice Accept a requested insurance by investor
+  /// @param _id of insurance
+  /// @return true
+  function acceptARequestByInvestor(uint _id) public payable
   stopInEmergency
-  isEnrolled
   isInit(_id)
   isNotInsured(insurances[_id].client)
   isNotSamePerson(_id)
-  hasEnoughBalance(insurances[_id].investorPay){
+  hasEnoughBalance(insurances[_id].investorPay) returns(bool){
+    if(users[msg.sender].user == address(0)){
+      addUser();
+    }
       Insurance storage insurance = insurances[_id];
       insurance.investor = msg.sender;
       insurance.status = Status.INPROCESS;
       insurance.startTime = block.timestamp;
       insurance.expireTime = insurance.startTime + insurance.duration;
-      require(insurance.expireTime > insurance.startTime ); // todo check this is correct
+      
       User storage user = users[msg.sender];
       user.usableBalance = SafeMath.sub(SafeMath.add(SafeMath.add(msg.value , insurance.clientPay), user.usableBalance) , insurance.investorPay);
       user.lockedBalance = SafeMath.add(insurance.investorPay, user.lockedBalance);
@@ -173,14 +202,14 @@ modifier isNotExpired(uint insuranceId) {
       
       insuredUsers[insurance.client] = true;
       emit LogInsuranceAcceptedByInvestor(_id);
-      
+      return true;
   }
 
-  /// @notice Withdraw ether from bank
+  /// @notice Withdraw custom amount
   /// @dev This does not return any excess ether sent to it
   /// @param withdrawAmount amount you want to withdraw
   /// @return The balance remaining for the user 
-  function withdraw(uint withdrawAmount) public returns (uint) {
+  function withdraw(uint withdrawAmount) public stopInEmergency returns (uint) {
     User storage user = users[msg.sender];
     require(withdrawAmount <= user.usableBalance);
     user.usableBalance -= withdrawAmount;
@@ -189,16 +218,108 @@ modifier isNotExpired(uint insuranceId) {
     return user.usableBalance;
 
   }
+
+  /// @notice Withdraw all balance. it works only in emergency
+  /// @dev This does not return any excess ether sent to it
+  /// @return The balance remaining for the user 
+  function withdraw() public onlyInEmergency returns (uint) {
+    User storage user = users[msg.sender];
+    require(user.usableBalance > 0);
+    user.usableBalance = 0;
+    msg.sender.transfer(user.usableBalance);
+    emit LogWithdrawal(msg.sender, withdrawAmount, user.usableBalance);
+    return user.usableBalance;
+
+  }
   
-  function requestEvaluator(uint insuranceId) public payable 
+
+  /// @notice client requests for evaluation
+  /// @dev if insurance has expired, its status changes to FINISHED
+  /// @param insuranceId id of insurance
+  /// @return false if insurance has expired otherwise returns true
+  function requestEvaluator(uint insuranceId) public stopInEmergency 
   verifyCaller(insurances[insuranceId].client)
-  isNotExpired(insuranceId)
-  checkValue(insuranceId)
+  // isNotExpired(insuranceId)
+  isEmpty(insuranceId)
+  // checkValue(insuranceId)
    returns(bool){
-     require(msg.value >= feeAmount);
+     if(insurances[insuranceId].expireTime > now){
+       checkIfIsExpired(insuranceId);
+       return false;
+     }else{
+      // require(msg.value >= feeAmount);
+      Insurance storage insurance = insurances[insuranceId];
+      insurance.evaluator = evaluators[availableEvaluator];
+      changeAvailableEvaluator(availableEvaluator);
+      return true;
+     }
+     
+  }
+
+// todo add stopInEmergency
+  /// @notice evalator accepts refund to client
+  /// @param insuranceId id of insurance
+  /// @return true
+  function refundToClient(uint insuranceId) public 
+  verifyCaller(insurances[insuranceId].evaluator)
+  isEmpty(insuranceId)
+  isInProcess(insuranceId)
+   returns(bool){
     Insurance storage insurance = insurances[insuranceId];
-    insurance.evaluator = evaluators[availableEvaluator];
-    changeAvailableEvaluator(availableEvaluator);
+    insurance.evaluatorStatus = EvaluatorStatus.ACCEPTED;
+    insurance.status = Status.FINISHED;
+
+    User storage client = users[insurance.client];
+    User storage investor = users[insurance.investor];
+
+    investor.lockedBalance -= insurance.investorPay;
+    client.usableBalance += insurance.investorPay;
+
+    emit LogInsuranceFinished(insuranceId);
+    return true;
+  }
+
+// todo add stopInEmergency
+  /// @notice evaluator reject refund to client.
+  /// @param insuranceId id of insurance
+  /// @return true
+  function refundToInvestor(uint insuranceId) public 
+  verifyCaller(insurances[insuranceId].evaluator)
+  isEmpty(insuranceId)
+  isInProcess(insuranceId)
+   returns(bool){
+    Insurance storage insurance = insurances[insuranceId];
+    insurance.evaluatorStatus = EvaluatorStatus.REJECTED;
+    insurance.status = Status.FINISHED;
+
+    User storage client = users[insurance.client];
+    User storage investor = users[insurance.investor];
+
+    investor.lockedBalance -= insurance.investorPay;
+    investor.usableBalance += insurance.investorPay;
+
+    emit LogInsuranceFinished(insuranceId);
+    return true;
+  }
+
+  /// @notice check if insurance is expired
+  /// @param insuranceId id of insurance
+  /// @return true
+  function checkIfIsExpired(uint insuranceId) public 
+  isEmpty(insuranceId)
+  isInProcess(insuranceId)
+  isExpired(insuranceId)
+   returns(bool){
+    Insurance storage insurance = insurances[insuranceId];
+    insurance.status = Status.FINISHED;
+
+    User storage client = users[insurance.client];
+    User storage investor = users[insurance.investor];
+
+    investor.lockedBalance -= insurance.investorPay;
+    investor.usableBalance += insurance.investorPay;
+
+    emit LogInsuranceFinished(insuranceId);
     return true;
   }
 
