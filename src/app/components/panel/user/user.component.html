@@ -1,0 +1,158 @@
+<div class="page-header no-gutters">
+  <div class="row align-items-md-center">
+    <div class="col-md-6">
+      <div class="media m-v-10">
+        <!-- <div class="avatar avatar-cyan avatar-icon avatar-square">
+           <i class="anticon anticon-star"></i>
+         </div>-->
+        <div class="media-body m-l-15">
+          <h3 class="mb-0">Init Insurances</h3>
+          <!--          <span class="text-gray font-size-13">Dev Team</span>-->
+        </div>
+      </div>
+    </div>
+    <!--<div class="col-md-6">
+      <div class="text-md-right m-v-10">
+        <div class="btn-group">
+          <button id="list-view-btn" type="button" class="btn btn-default btn-icon">
+            <i class="anticon anticon-ordered-list"></i>
+          </button>
+          <button id="card-view-btn" type="button" class="btn btn-default btn-icon active">
+            <i class="anticon anticon-appstore"></i>
+          </button>
+        </div>
+      </div>
+    </div>-->
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-9">
+    <div class="row" id="card-view">
+      <div *ngFor="let data of list" class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="m-t-20 text-center">
+              <h4 class="m-t-30">{{data.name}}</h4>
+              <p>{{data.desc}}</p>
+            </div>
+            <div class="text-center m-t-30">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone">
+                <i class="anticon anticon-check"></i>
+                <span class="m-l-5">Accept</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--<div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="m-t-20 text-center">
+              <h4 class="m-t-30">Erin Gonzales</h4>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid dignissimos illum quaerat quisquam sit unde!</p>
+            </div>
+            <div class="text-center m-t-30">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone">
+                <i class="anticon anticon-check"></i>
+                <span class="m-l-5">Accept</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="m-t-20 text-center">
+              <h4 class="m-t-30">Erin Gonzales</h4>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid dignissimos illum quaerat quisquam sit unde!</p>
+            </div>
+            <div class="text-center m-t-30">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone">
+                <i class="anticon anticon-check"></i>
+                <span class="m-l-5">Accept</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="m-t-20 text-center">
+              <h4 class="m-t-30">Erin Gonzales</h4>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid dignissimos illum quaerat quisquam sit unde!</p>
+            </div>
+            <div class="text-center m-t-30">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone">
+                <i class="anticon anticon-check"></i>
+                <span class="m-l-5">Accept</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>-->
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h4>Request Insurance:</h4>
+            <div class="m-t-25">
+              <form>
+                <div class="form-row align-items-center">
+                  <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInputGroup1">Username</label>
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">?????</div>
+                      </div>
+                      <input type="text" class="form-control" name="user" [(ngModel)]="user" id="inlineFormInputGroup1" placeholder="">
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInputGroup2">Username</label>
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Pay Amount</div>
+                      </div>
+                      <input type="text" class="form-control" name="pass" [(ngModel)]="pass" id="inlineFormInputGroup2" placeholder="">
+                    </div>
+                  </div>
+                  <!--<div class="col-auto">
+                    <label class="sr-only" for="inlineFormInput">Name</label>
+                    <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Ovration">
+                  </div>
+                  <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInput2">Name</label>
+                    <input type="text" class="form-control mb-2" id="inlineFormInput2" placeholder="Pay Amount">
+                  </div>-->
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-success mb-2" (click)="submit()">Submit</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card card-body">
+      <h5>Address</h5>
+      <p>Lorem ipsum dolor sit amet.</p>
+      <hr>
+      <h5>Current Insurance</h5>
+      <div>
+        <div class="m-t-20 text-center">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur eveniet illum obcaecati recusandae sunt vitae?</p>
+        </div>
+      </div>
+      <hr>
+      <h5>Balance</h5>
+      <p>$1000</p>
+      <p>$250</p>
+    </div>
+  </div>
+</div>
