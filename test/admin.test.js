@@ -63,7 +63,7 @@ contract('Admin', function(accounts) {
     it("should add new evaluator", async()=>{
 
         const tx = await instance.addNewEvaluator(alice, {from: owner})
-        const result = await instance.evaluators.call(0)
+        const result = await instance.evaluators.call(1)
         const result2 = await instance.validEvaluators.call(alice)
         assert.equal(result, alice, 'adding an evaluator should save address in evaluators')
         assert.equal(result2, true, 'adding an evaluator should validate the evaluator')

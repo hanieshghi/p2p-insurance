@@ -13,6 +13,7 @@ contract Admin {
   event LogStoppedChanged(bool indexed stopped);
   event LogEvaluatorAdded(address indexed evaluator);
   event LogEvaluatorRemoved(address indexed evaluator);
+  event LogAvailableEvaluatorChanged(uint evaluator);
 
   modifier stopInEmergency { require(!stopped); _; }
   modifier onlyInEmergency { require(stopped); _; }
@@ -64,6 +65,7 @@ contract Admin {
     if(availableEvaluator >= counter){
       availableEvaluator = 0;
     }
+    emit LogAvailableEvaluatorChanged(availableEvaluator);
     return availableEvaluator;
   }
 }
