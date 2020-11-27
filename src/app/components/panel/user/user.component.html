@@ -28,15 +28,15 @@
 <div class="row">
   <div class="col-lg-9">
     <div class="row" id="card-view">
-      <div *ngFor="let data of list" class="col-md-3">
+      <div *ngFor="let data of initList" class="col-md-3">
         <div class="card">
           <div class="card-body">
             <div class="m-t-20 text-center">
-              <h4 class="m-t-30">{{data.name}}</h4>
-              <p>{{data.desc}}</p>
+              <h4 class="m-t-30">{{data.id}}</h4>
+              <p>{{data.client}}</p>
             </div>
             <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="acceptRequest(data.id, data.investorPay)">
                 <i class="anticon anticon-check"></i>
                 <span class="m-l-5">Accept</span>
               </a>
@@ -44,54 +44,100 @@
           </div>
         </div>
       </div>
-      <!--<div class="col-md-3">
+    </div>
+    <div class="col-md-6">
+      <div class="media m-v-10">
+        <!-- <div class="avatar avatar-cyan avatar-icon avatar-square">
+           <i class="anticon anticon-star"></i>
+         </div>-->
+        <div class="media-body m-l-15">
+          <h3 class="mb-0">InProcess Insurances</h3>
+          <!--          <span class="text-gray font-size-13">Dev Team</span>-->
+        </div>
+      </div>
+    </div>
+    <div class="row" id="card-view2">
+      <div *ngFor="let data of processList" class="col-md-3">
         <div class="card">
           <div class="card-body">
             <div class="m-t-20 text-center">
-              <h4 class="m-t-30">Erin Gonzales</h4>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid dignissimos illum quaerat quisquam sit unde!</p>
+              <h4 class="m-t-30">{{data.id}}</h4>
+              <p>{{data.client}}</p>
             </div>
             <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="requestEvaluator(data.id)">
                 <i class="anticon anticon-check"></i>
-                <span class="m-l-5">Accept</span>
+                <span class="m-l-5">Request For Evaluation</span>
+              </a>
+            </div>
+            <div class="text-center m-t-30">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="checkIfExpired(data.id)">
+                <i class="anticon anticon-check"></i>
+                <span class="m-l-5">Check if is expired</span>
               </a>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
+    </div>
+
+    <div class="col-md-6">
+      <div class="media m-v-10">
+        <!-- <div class="avatar avatar-cyan avatar-icon avatar-square">
+           <i class="anticon anticon-star"></i>
+         </div>-->
+        <div class="media-body m-l-15">
+          <h3 class="mb-0">finished Insurances</h3>
+          <!--          <span class="text-gray font-size-13">Dev Team</span>-->
+        </div>
+      </div>
+    </div>
+    <div class="row" id="card-view3">
+      <div *ngFor="let data of finishList" class="col-md-3">
         <div class="card">
           <div class="card-body">
             <div class="m-t-20 text-center">
-              <h4 class="m-t-30">Erin Gonzales</h4>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid dignissimos illum quaerat quisquam sit unde!</p>
+              <h4 class="m-t-30">{{data.id}}</h4>
+              <p>{{data.client}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="media m-v-10">
+        <!-- <div class="avatar avatar-cyan avatar-icon avatar-square">
+           <i class="anticon anticon-star"></i>
+         </div>-->
+        <div class="media-body m-l-15">
+          <h3 class="mb-0">Waiting For Evaluation Insurances</h3>
+          <!--          <span class="text-gray font-size-13">Dev Team</span>-->
+        </div>
+      </div>
+    </div>
+    <div class="row" id="card-view4">
+      <div *ngFor="let data of waitingList" class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="m-t-20 text-center">
+              <h4 class="m-t-30">{{data.id}}</h4>
+              <p>{{data.client}}</p>
             </div>
             <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="refundToClient(data.id)">
                 <i class="anticon anticon-check"></i>
-                <span class="m-l-5">Accept</span>
+                <span class="m-l-5">Refund To Client</span>
+              </a>
+            </div>
+            <div class="text-center m-t-30">
+              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="refundToInvestor(data.id)">
+                <i class="anticon anticon-check"></i>
+                <span class="m-l-5">Refund To Investor</span>
               </a>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="m-t-20 text-center">
-              <h4 class="m-t-30">Erin Gonzales</h4>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid dignissimos illum quaerat quisquam sit unde!</p>
-            </div>
-            <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone">
-                <i class="anticon anticon-check"></i>
-                <span class="m-l-5">Accept</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>-->
     </div>
     <div class="row">
       <div class="col-12">
@@ -105,9 +151,9 @@
                     <label class="sr-only" for="inlineFormInputGroup1">Username</label>
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
-                        <div class="input-group-text">?????</div>
+                        <div class="input-group-text">Duration in Days</div>
                       </div>
-                      <input type="text" class="form-control" name="user" [(ngModel)]="user" id="inlineFormInputGroup1" placeholder="">
+                      <input type="text" class="form-control" name="duration" [(ngModel)]="duration" id="inlineFormInputGroup1" placeholder="">
                     </div>
                   </div>
                   <div class="col-auto">
@@ -116,7 +162,7 @@
                       <div class="input-group-prepend">
                         <div class="input-group-text">Pay Amount</div>
                       </div>
-                      <input type="text" class="form-control" name="pass" [(ngModel)]="pass" id="inlineFormInputGroup2" placeholder="">
+                      <input type="text" class="form-control" name="clientPay" [(ngModel)]="clientPay" id="inlineFormInputGroup2" placeholder="">
                     </div>
                   </div>
                   <!--<div class="col-auto">
@@ -128,7 +174,7 @@
                     <input type="text" class="form-control mb-2" id="inlineFormInput2" placeholder="Pay Amount">
                   </div>-->
                   <div class="col-auto">
-                    <button type="submit" class="btn btn-success mb-2" (click)="submit()">Submit</button>
+                    <button type="submit" class="btn btn-success mb-2" (click)="addRequest()">Submit</button>
                   </div>
                 </div>
               </form>
@@ -141,18 +187,27 @@
   <div class="col-lg-3">
     <div class="card card-body">
       <h5>Address</h5>
-      <p>Lorem ipsum dolor sit amet.</p>
+      <p>{{account}}</p>
       <hr>
       <h5>Current Insurance</h5>
       <div>
-        <div class="m-t-20 text-center">
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur eveniet illum obcaecati recusandae sunt vitae?</p>
+        <div class="m-t-20 text-left">
+          <p>id: {{currentUserInsurance.id}}</p>
+          <p>startTime: {{currentUserInsurance.startTime}}</p>
+          <p>expireTime: {{currentUserInsurance.expireTime}}</p>
+          <p>duration: {{currentUserInsurance.duration}} days</p>
+          <p>investor: {{currentUserInsurance.investor}}</p>
+          <p>client pay: {{currentUserInsurance.clientPay}}</p>
+          <p>investorPay: {{currentUserInsurance.investorPay}}</p>
+          <p>status: {{currentUserInsurance.status}}</p>
+          <p>evaluator: {{currentUserInsurance.evaluator}}</p>
+          <p>evaluator status: {{currentUserInsurance.evaluatorStatus}}</p>
         </div>
       </div>
       <hr>
       <h5>Balance</h5>
-      <p>$1000</p>
-      <p>$250</p>
+      <p>usableBalance: {{usableBalance}}</p>
+      <p>lockedBalance: {{lockedBalance}}</p>
     </div>
   </div>
 </div>

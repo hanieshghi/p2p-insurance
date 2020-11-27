@@ -6,7 +6,7 @@
           <div>
             <p class="m-b-0">Total Users</p>
             <h2 class="m-b-0">
-              <span>15</span>
+              <span>{{totalUser}}</span>
             </h2>
           </div>
           <div class="avatar avatar-icon avatar-lg avatar-blue">
@@ -23,7 +23,7 @@
           <div>
             <p class="m-b-0">Total Insurances</p>
             <h2 class="m-b-0">
-              <span>26</span>
+              <span>{{totalInsurance}}</span>
             </h2>
           </div>
           <div class="avatar avatar-icon avatar-lg avatar-cyan">
@@ -38,13 +38,7 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <p class="m-b-0">Start Contract</p>
-            <h2 class="m-b-0">
-              <span>5</span>
-            </h2>
-          </div>
-          <div class="avatar avatar-icon avatar-lg avatar-red">
-            <i class="anticon anticon-profile"></i>
+            <button type="submit" class="btn btn-success mb-2" (click)="start()">START CONTRACT</button>
           </div>
         </div>
       </div>
@@ -69,28 +63,28 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <h4>Add New Evaluation:</h4>
+        <h4>Add New Evaluator:</h4>
         <div class="m-t-25">
           <form>
             <div class="form-row align-items-center">
               <div class="col-auto">
-                <label class="sr-only" for="inlineFormInputGroup1">Username</label>
+                <label class="sr-only" for="inlineFormInputGroup1">address</label>
                 <div class="input-group mb-2">
                   <div class="input-group-prepend">
-                    <div class="input-group-text">?????</div>
+                    <div class="input-group-text">address:</div>
                   </div>
-                  <input type="text" class="form-control" id="inlineFormInputGroup1" placeholder="">
+                  <input type="text" class="form-control" id="inlineFormInputGroup1" name="evaluatorAddress" [(ngModel)]="evaluatorAddress"  placeholder="">
                 </div>
               </div>
-              <div class="col-auto">
-                <label class="sr-only" for="inlineFormInputGroup2">Username</label>
-                <div class="input-group mb-2">
-                  <div class="input-group-prepend">
-                    <div class="input-group-text">?????</div>
-                  </div>
-                  <input type="text" class="form-control" id="inlineFormInputGroup2" placeholder="">
-                </div>
-              </div>
+<!--              <div class="col-auto">-->
+<!--                <label class="sr-only" for="inlineFormInputGroup2">Username</label>-->
+<!--                <div class="input-group mb-2">-->
+<!--                  <div class="input-group-prepend">-->
+<!--                    <div class="input-group-text">?????</div>-->
+<!--                  </div>-->
+<!--                  <input type="text" class="form-control" id="inlineFormInputGroup2" placeholder="">-->
+<!--                </div>-->
+<!--              </div>-->
               <!--<div class="col-auto">
                 <label class="sr-only" for="inlineFormInput">Name</label>
                 <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Ovration">
@@ -100,7 +94,7 @@
                 <input type="text" class="form-control mb-2" id="inlineFormInput2" placeholder="Pay Amount">
               </div>-->
               <div class="col-auto">
-                <button type="submit" class="btn btn-success mb-2">Submit</button>
+                <button type="submit" class="btn btn-success mb-2" (click)="addEvaluator()">Submit</button>
               </div>
             </div>
           </form>
@@ -114,36 +108,48 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <h4>List Of Evaluations</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea illum in iure magni modi necessitatibus obcaecati quaerat quia saepe, tempora!</p>
+        <h4>List Of last added  Evaluators</h4>
+<!--        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea illum in iure magni modi necessitatibus obcaecati quaerat quia saepe, tempora!</p>-->
         <div class="table-responsive">
           <table class="table">
             <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
+              <th scope="col">Address</th>
+<!--              <th scope="col">Last</th>-->
+<!--              <th scope="col">Handle</th>-->
             </tr>
             </thead>
-            <tbody>
+            <tbody >
             <tr>
               <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
+              <td>{{evaluatorsList[0]}}</td>
+<!--              <td>Otto</td>-->
+<!--              <td>@mdo</td>-->
             </tr>
             <tr>
               <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
+              <td>{{evaluatorsList[1]}}</td>
+<!--              <td>Thornton</td>-->
+<!--              <td>@fat</td>-->
             </tr>
             <tr>
               <th scope="row">3</th>
-              <td>Larry</td>
-              <td>the Bird</td>
-              <td>@twitter</td>
+              <td>{{evaluatorsList[2]}}</td>
+<!--              <td>the Bird</td>-->
+<!--              <td>@twitter</td>-->
+            </tr>
+            <tr>
+              <th scope="row">4</th>
+              <td>{{evaluatorsList[3]}}</td>
+              <!--              <td>the Bird</td>-->
+              <!--              <td>@twitter</td>-->
+            </tr>
+            <tr>
+              <th scope="row">5</th>
+              <td>{{evaluatorsList[4]}}</td>
+              <!--              <td>the Bird</td>-->
+              <!--              <td>@twitter</td>-->
             </tr>
             </tbody>
           </table>

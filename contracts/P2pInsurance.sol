@@ -5,18 +5,16 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import './Admin.sol';
 
 contract P2pInsurance is Admin{
-  mapping( uint => Insurance) public insurances; 
+  mapping( uint => Insurance) private insurances;
   mapping(address => User) private users;
-  mapping (address => bool) public insuredUsers;
+  mapping (address => bool) private insuredUsers;
   // mapping (address => bool) public enrolled;
-    // todo fetch user func
-    // todo fetch insurance func
     // todo save and fetch init insurances
   uint public insuranceCount;
   uint public usersCount;
   // uint public feeAmount;
-  
-  
+
+
   struct User {
     uint id;
     address payable user;
@@ -41,13 +39,13 @@ contract P2pInsurance is Admin{
   }
 
   enum Status {
-    INIT , INPROCESS, FINISHED
+    INIT , INPROCESS, WAITINGFORAVALUATION ,FINISHED
   }
   enum EvaluatorStatus {
     EMPTY ,ACCEPTED , REJECTED
   }
-  
-  
+
+
   //events
   event LogUserEnrolled(address indexed accountAddress);
   event LogNewRequest(address indexed client, uint indexed insuranceId, uint indexed duration);
@@ -56,42 +54,47 @@ contract P2pInsurance is Admin{
   event LogWithdrawal(address indexed accountAddress, uint indexed withdrawAmount, uint indexed newBalance);
     event LogSetEvaluator(uint indexed insuranceId, address indexed evaluator);
   //
-  
-  
+
+
   modifier isFinished(uint insuranceId){
       require(insurances[insuranceId].status == Status.FINISHED);
       _;
   }
-  
+
   modifier isInProcess(uint insuranceId){
       require(insurances[insuranceId].status == Status.INPROCESS);
       _;
   }
-  
+
+  modifier isWaiting(uint insuranceId){
+    require(insurances[insuranceId].status == Status.WAITINGFORAVALUATION);
+    _;
+  }
+
   modifier isInit(uint insuranceId){
       require(insurances[insuranceId].status == Status.INIT && insurances[insuranceId].duration != 0);
       _;
   }
-  
-  modifier verifyCaller (address _address) { 
-      require (msg.sender == _address); 
+
+  modifier verifyCaller (address _address) {
+      require (msg.sender == _address);
       _;
-      
+
   }
   modifier hasEnoughBalance(uint _price) {
       require(SafeMath.add(users[msg.sender].usableBalance , msg.value) >= _price);
-      _;   
+      _;
   }
-  
+
   modifier isNotInsured(address _address) {
       require(!insuredUsers[_address]);
       _;
-      
+
   }
-  
+
   modifier isNotSamePerson(uint insuranceId) {
       require(insurances[insuranceId].client != msg.sender);
-      _;   
+      _;
   }
 
 //  modifier isNotExpired(uint insuranceId) {
@@ -101,15 +104,15 @@ contract P2pInsurance is Admin{
 
   modifier isExpired(uint insuranceId) {
       require(insurances[insuranceId].expireTime  < now);
-      _;   
+      _;
   }
 
   modifier isEmpty(uint insuranceId) {
       require(insurances[insuranceId].evaluatorStatus == EvaluatorStatus.EMPTY);
-      _;   
+      _;
   }
 
-  
+
   constructor() public {
     insuranceCount = 0;
     usersCount = 0;
@@ -131,7 +134,7 @@ contract P2pInsurance is Admin{
     usersCount += 1;
     emit LogUserEnrolled(msg.sender);
   }
-  
+
   /// @notice Add new insurance request from client
   /// @dev insuranceId 0 is skipped.
   /// @dev duration is in day
@@ -145,6 +148,7 @@ contract P2pInsurance is Admin{
     if(users[msg.sender].user == address(0)){
       addUser();
     }
+    require(users[msg.sender].insuranceId == 0 || insurances[users[msg.sender].insuranceId].status == Status.FINISHED);
     insuranceCount += 1;
     insurances[insuranceCount] = Insurance({
       id: insuranceCount,
@@ -154,7 +158,7 @@ contract P2pInsurance is Admin{
       startTime: 0,
       expireTime: 0,
       status: Status.INIT,
-      investorPay: 0,
+      investorPay: SafeMath.mul(_clientPay , SafeMath.div(SafeMath.mul(_duration, 12),3)) ,
       clientPay: _clientPay,
       evaluator: address(0),
       evaluatorStatus: EvaluatorStatus.EMPTY
@@ -167,14 +171,14 @@ contract P2pInsurance is Admin{
     emit LogNewRequest(msg.sender , insuranceCount , _duration );
     return insuranceCount;
   }
-  
+
   /// @notice Accept a requested insurance by investor
   /// @param _id of insurance
   /// @return true
   function acceptARequestByInvestor(uint _id) public payable
   stopInEmergency
   isInit(_id)
-  isNotInsured(insurances[_id].client)
+//  isNotInsured(insurances[_id].client)
   isNotSamePerson(_id)
   hasEnoughBalance(insurances[_id].investorPay) returns(bool){
     if(users[msg.sender].user == address(0)){
@@ -185,13 +189,13 @@ contract P2pInsurance is Admin{
       insurance.status = Status.INPROCESS;
       insurance.startTime = now;
       insurance.expireTime = insurance.startTime +  insurance.duration * 1 days ;
-      
+
       User storage user = users[msg.sender];
       user.usableBalance = SafeMath.sub(SafeMath.add(SafeMath.add(msg.value , insurance.clientPay), user.usableBalance) , insurance.investorPay);
       user.lockedBalance = SafeMath.add(insurance.investorPay, user.lockedBalance);
       users[insurance.client].lockedBalance = SafeMath.sub(users[insurance.client].lockedBalance,insurance.clientPay);
       user.investsCount += 1;
-      
+
       insuredUsers[insurance.client] = true;
       emit LogInsuranceAcceptedByInvestor(_id);
       return true;
@@ -200,7 +204,7 @@ contract P2pInsurance is Admin{
   /// @notice Withdraw custom amount
   /// @dev This does not return any excess ether sent to it
   /// @param withdrawAmount amount you want to withdraw
-  /// @return The balance remaining for the user 
+  /// @return The balance remaining for the user
   function withdraw(uint withdrawAmount) public stopInEmergency returns (uint) {
     User storage user = users[msg.sender];
     require(withdrawAmount <= user.usableBalance);
@@ -213,7 +217,7 @@ contract P2pInsurance is Admin{
 
   /// @notice Withdraw all balance. it works only in emergency
   /// @dev This does not return any excess ether sent to it
-  /// @return The balance remaining for the user 
+  /// @return The balance remaining for the user
   function withdraw() public onlyInEmergency returns (uint) {
     User storage user = users[msg.sender];
     require(user.usableBalance > 0);
@@ -224,7 +228,7 @@ contract P2pInsurance is Admin{
     return user.usableBalance;
 
   }
-  
+
 
   /// @notice client requests for evaluation
   /// @dev if insurance has expired, its status changes to FINISHED
@@ -236,6 +240,7 @@ contract P2pInsurance is Admin{
   isEmpty(insuranceId)
   // checkValue(insuranceId)
    returns(bool){
+    require(insurances[insuranceId].evaluator == address(0));
      if(insurances[insuranceId].expireTime < now){
        checkIfIsExpired(insuranceId);
        return false;
@@ -243,12 +248,13 @@ contract P2pInsurance is Admin{
       // require(msg.value >= feeAmount);
       Insurance storage insurance = insurances[insuranceId];
       insurance.evaluator = evaluators[0];
+       insurance.status = Status.WAITINGFORAVALUATION;
 //      insurance.evaluator = evaluators[availableEvaluator];
 //      changeAvailableEvaluator(availableEvaluator);
       emit LogSetEvaluator(insuranceId, insurance.evaluator);
       return true;
      }
-     
+
   }
 
   /// @notice evalator accepts refund to client
@@ -258,7 +264,7 @@ contract P2pInsurance is Admin{
   stopInEmergency
   verifyCaller(insurances[insuranceId].evaluator)
   isEmpty(insuranceId)
-  isInProcess(insuranceId)
+  isWaiting(insuranceId)
    returns(bool){
     Insurance storage insurance = insurances[insuranceId];
     insurance.evaluatorStatus = EvaluatorStatus.ACCEPTED;
@@ -282,7 +288,7 @@ contract P2pInsurance is Admin{
   stopInEmergency
   verifyCaller(insurances[insuranceId].evaluator)
   isEmpty(insuranceId)
-  isInProcess(insuranceId)
+  isWaiting(insuranceId)
    returns(bool){
     Insurance storage insurance = insurances[insuranceId];
     insurance.evaluatorStatus = EvaluatorStatus.REJECTED;
@@ -301,7 +307,7 @@ contract P2pInsurance is Admin{
   /// @notice check if insurance is expired
   /// @param insuranceId id of insurance
   /// @return true
-  function checkIfIsExpired(uint insuranceId) public 
+  function checkIfIsExpired(uint insuranceId) public
   isEmpty(insuranceId)
   isInProcess(insuranceId)
   isExpired(insuranceId)
@@ -322,7 +328,7 @@ contract P2pInsurance is Admin{
     /// @notice fetch user info by address
     /// @param _user address of user
     /// @return id
-    function fetchUser(address _user) public view isOwner returns(
+    function fetchUser(address _user) public view returns(
         uint id, address user, uint usableBalance, uint lockedBalance, uint investsCount, uint insuranceId
     ) {
         id = users[_user].id;
