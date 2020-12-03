@@ -165,6 +165,25 @@ export class AppService {
       });
     });
   }
+
+  fetchStatusOfContract = () => {
+    const that = this;
+    return new Promise((resolve, reject) => {
+      // console.log("account: ", that.account);
+      this.adminContract.deployed().then(instance => instance.stopped.call(
+        {
+          from: that.account
+        })).then(status => {
+        console.log('contrace status: ', status);
+        if (status) {
+          return resolve(JSON.stringify(status));
+        }
+      }).catch(error => {
+        console.log('fetch contrace status error: ', error);
+        return reject({status: false});
+      });
+    });
+  }
   // p2pInsuranceContract
   fetchNumberOfEnrolledUsers = () => {
     const that = this;
@@ -326,12 +345,104 @@ export class AppService {
         {
           from: that.account,
         })).then(status => {
-        console.log('insurance: ', status);
+        // console.log('insurance: ', status);
         if (status) {
           return resolve(status);
         }
       }).catch(error => {
         console.log('fetch insurance error: ', error);
+        return reject(JSON.stringify(error.reason));
+      });
+    });
+  }
+
+  fetchInvestsIdsOfUser = () => {
+    const that = this;
+    return new Promise((resolve, reject) => {
+      this.insuranceContract.deployed().then(instance => instance.fetchInvestsIdOfUser.call(
+        {
+          from: that.account,
+        })).then(status => {
+        console.log('invest array: ', status);
+        if (status) {
+          return resolve(status);
+        }
+      }).catch(error => {
+        console.log('fetch invest list error: ', error);
+        return reject(JSON.stringify(error.reason));
+      });
+    });
+  }
+
+  fetchInsuranceIdsOfUser = () => {
+    const that = this;
+    return new Promise((resolve, reject) => {
+      this.insuranceContract.deployed().then(instance => instance.fetchInsurancesIdOfUser.call(
+        {
+          from: that.account,
+        })).then(status => {
+        console.log('insurance array: ', status);
+        if (status) {
+          return resolve(status);
+        }
+      }).catch(error => {
+        console.log('fetch insurance ids list error: ', error);
+        return reject(JSON.stringify(error.reason));
+      });
+    });
+  }
+
+  // in normal mode
+  withdrawCustomAmount = (amount) => {
+    const that = this;
+    return new Promise((resolve, reject) => {
+      this.insuranceContract.deployed().then(instance => instance.withdrawCustomAmount(
+        amount,
+        {
+          from: that.account
+        })).then(status => {
+        console.log('status: ', status);
+        if (status) {
+          return resolve('withdrawed successfully');
+        }
+      }).catch(error => {
+        console.log('withdraw req error: ', error);
+        return reject(JSON.stringify(error.reason));
+      });
+    });
+  }
+
+  // in emergency mode
+  withdraw = () => {
+    const that = this;
+    return new Promise((resolve, reject) => {
+      this.insuranceContract.deployed().then(instance => instance.withdraw(
+        {
+          from: that.account
+        })).then(status => {
+        console.log('status: ', status);
+        if (status) {
+          return resolve('withdrawed successfully');
+        }
+      }).catch(error => {
+        console.log('withdraw req error: ', error);
+        return reject(JSON.stringify(error.reason));
+      });
+    });
+  }
+  checkIfIsExpired = (id) => {
+    const that = this;
+    return new Promise((resolve, reject) => {
+      this.insuranceContract.deployed().then(instance => instance.checkIfIsExpired( id,
+        {
+          from: that.account
+        })).then(status => {
+        console.log('status: ', status);
+        if (status) {
+          return resolve(status);
+        }
+      }).catch(error => {
+        console.log('check expire req error: ', error);
         return reject(JSON.stringify(error.reason));
       });
     });

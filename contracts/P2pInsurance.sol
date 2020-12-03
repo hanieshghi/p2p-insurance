@@ -8,8 +8,9 @@ contract P2pInsurance is Admin{
   mapping( uint => Insurance) private insurances;
   mapping(address => User) private users;
   mapping (address => bool) private insuredUsers;
+  mapping (address => uint[]) private userInsurancesAsClient;
+  mapping (address => uint[]) private userInsurancesAsInvestor;
   // mapping (address => bool) public enrolled;
-    // todo save and fetch init insurances
   uint public insuranceCount;
   uint public usersCount;
   // uint public feeAmount;
@@ -21,6 +22,7 @@ contract P2pInsurance is Admin{
     uint usableBalance;
     uint lockedBalance;
     uint investsCount;
+    uint insuranceCount;
     uint insuranceId;
   }
 
@@ -128,6 +130,7 @@ contract P2pInsurance is Admin{
         usableBalance: 0,
         lockedBalance: 0,
         investsCount: 0,
+        insuranceCount: 0,
         insuranceId: 0
     });
     // enrolled[msg.sender] = true;
@@ -143,6 +146,7 @@ contract P2pInsurance is Admin{
   /// @return insuranceCount the id of the new insurance
   function addNewRequest(uint _duration, uint _clientPay) public payable
   stopInEmergency
+  isNotOwner
   hasEnoughBalance(_clientPay) returns(uint)
   {
     if(users[msg.sender].user == address(0)){
@@ -163,11 +167,12 @@ contract P2pInsurance is Admin{
       evaluator: address(0),
       evaluatorStatus: EvaluatorStatus.EMPTY
     });
-    // todo calculate investorPay by duration and clientPay
     User storage user = users[msg.sender];
     user.usableBalance += msg.value - _clientPay;
     user.lockedBalance += _clientPay;
     user.insuranceId = insuranceCount;
+    userInsurancesAsClient[msg.sender][user.insuranceCount] = insuranceCount;
+    user.insuranceCount += 1;
     emit LogNewRequest(msg.sender , insuranceCount , _duration );
     return insuranceCount;
   }
@@ -177,6 +182,7 @@ contract P2pInsurance is Admin{
   /// @return true
   function acceptARequestByInvestor(uint _id) public payable
   stopInEmergency
+  isNotOwner
   isInit(_id)
 //  isNotInsured(insurances[_id].client)
   isNotSamePerson(_id)
@@ -194,7 +200,8 @@ contract P2pInsurance is Admin{
       user.usableBalance = SafeMath.sub(SafeMath.add(SafeMath.add(msg.value , insurance.clientPay), user.usableBalance) , insurance.investorPay);
       user.lockedBalance = SafeMath.add(insurance.investorPay, user.lockedBalance);
       users[insurance.client].lockedBalance = SafeMath.sub(users[insurance.client].lockedBalance,insurance.clientPay);
-      user.investsCount += 1;
+      userInsurancesAsInvestor[msg.sender][user.investsCount] = insurance.id;
+    user.investsCount += 1;
 
       insuredUsers[insurance.client] = true;
       emit LogInsuranceAcceptedByInvestor(_id);
@@ -205,7 +212,7 @@ contract P2pInsurance is Admin{
   /// @dev This does not return any excess ether sent to it
   /// @param withdrawAmount amount you want to withdraw
   /// @return The balance remaining for the user
-  function withdraw(uint withdrawAmount) public stopInEmergency returns (uint) {
+  function withdrawCustomAmount(uint withdrawAmount) public stopInEmergency returns (uint) {
     User storage user = users[msg.sender];
     require(withdrawAmount <= user.usableBalance);
     user.usableBalance -= withdrawAmount;
@@ -310,19 +317,24 @@ contract P2pInsurance is Admin{
   function checkIfIsExpired(uint insuranceId) public
   isEmpty(insuranceId)
   isInProcess(insuranceId)
-  isExpired(insuranceId)
+//  isExpired(insuranceId)
    returns(bool){
-    Insurance storage insurance = insurances[insuranceId];
-    insurance.status = Status.FINISHED;
+    if(insurances[insuranceId].expireTime  < now){
+      Insurance storage insurance = insurances[insuranceId];
+      insurance.status = Status.FINISHED;
 
-//    User storage client = users[insurance.client];
-    User storage investor = users[insurance.investor];
+      //    User storage client = users[insurance.client];
+      User storage investor = users[insurance.investor];
 
-    investor.lockedBalance -= insurance.investorPay;
-    investor.usableBalance += insurance.investorPay;
+      investor.lockedBalance -= insurance.investorPay;
+      investor.usableBalance += insurance.investorPay;
 
-    emit LogInsuranceFinished(insuranceId, insurance.startTime, insurance.expireTime, now);
-    return true;
+      emit LogInsuranceFinished(insuranceId, insurance.startTime, insurance.expireTime, now);
+      return true;
+    }else{
+      return false;
+    }
+
   }
 
     /// @notice fetch user info by address
@@ -361,6 +373,14 @@ contract P2pInsurance is Admin{
         evaluatorStatus = uint(insurances[_id].evaluatorStatus);
         return (id, investor, client, duration, startTime, expireTime, status, investorPay, clientPay, evaluator, evaluatorStatus);
     }
+
+  function fetchInvestsIdOfUser() public view returns (uint[] memory ) {
+    return userInsurancesAsInvestor[msg.sender] ;
+  }
+
+  function fetchInsurancesIdOfUser() public view returns (uint[] memory ) {
+    return userInsurancesAsClient[msg.sender] ;
+  }
 
 
 }

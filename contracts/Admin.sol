@@ -4,8 +4,8 @@ pragma solidity >=0.4.22 <0.8.0;
 contract Admin {
 
   address owner;
-  mapping(address => bool) public validEvaluators;
-  mapping(uint => address) public evaluators;
+  mapping(address => bool) internal validEvaluators;
+  mapping(uint => address) internal evaluators;
   uint public counter;
   bool public stopped = false;
   uint availableEvaluator;
@@ -21,6 +21,11 @@ contract Admin {
   modifier isOwner(){
       require(msg.sender == owner);
       _;
+  }
+
+  modifier isNotOwner(){
+    require(msg.sender != owner);
+    _;
   }
   modifier isEvaluator(){
       require(validEvaluators[msg.sender]);
@@ -55,11 +60,6 @@ contract Admin {
     return true;
   }
 
-  // function removeEvaluator(address _evaluator) public isOwner returns ( bool){
-  //   validEvaluators[_evaluator] = false;
-  //   emit LogEvaluatorRemoved(_evaluator);
-  //   return true;
-  // }
 
   function changeAvailableEvaluator(uint lastAvailableEvaluator) internal returns ( uint){
     availableEvaluator = lastAvailableEvaluator+1;

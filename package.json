@@ -20,6 +20,8 @@
     "@angular/platform-browser-dynamic": "~10.1.2",
     "@angular/router": "~10.1.2",
     "@truffle/contract": "^4.2.31",
+    "@truffle/hdwallet-provider": "^1.2.0",
+    "dotenv": "^8.2.0",
     "rxjs": "~6.6.0",
     "sweetalert2": "^10.10.1",
     "tslib": "^2.0.0",

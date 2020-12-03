@@ -6,7 +6,7 @@
            <i class="anticon anticon-star"></i>
          </div>-->
         <div class="media-body m-l-15">
-          <h3 class="mb-0">Init Insurances</h3>
+          <h3 class="mb-0">User Panel</h3>
           <!--          <span class="text-gray font-size-13">Dev Team</span>-->
         </div>
       </div>
@@ -27,118 +27,231 @@
 </div>
 <div class="row">
   <div class="col-lg-9">
-    <div class="row" id="card-view">
-      <div *ngFor="let data of initList" class="col-md-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="m-t-20 text-center">
-              <h4 class="m-t-30">{{data.id}}</h4>
-              <p>{{data.client}}</p>
-            </div>
-            <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="acceptRequest(data.id, data.investorPay)">
-                <i class="anticon anticon-check"></i>
-                <span class="m-l-5">Accept</span>
+    <div class="card">
+      <div class="card-body">
+        <!--<h4>Basic Tabs</h4>
+        <p>Example usage of Basic Tabs.</p>-->
+        <div>
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="init-tab" data-toggle="tab" href="#init" role="tab" aria-controls="home" aria-selected="true">Init Insurances
               </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " id="InProcess-tab" data-toggle="tab" href="#InProcess" role="tab" aria-controls="contact" aria-selected="false">InProcess Insurances</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " id="Waiting-tab" data-toggle="tab" href="#Waiting" role="tab" aria-controls="contact" aria-selected="false">Waiting Insurances</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="Finished-tab" data-toggle="tab" href="#Finished" role="tab" aria-controls="profile" aria-selected="false">Finished Insurances</a>
+            </li>
+
+          </ul>
+          <div class="tab-content m-t-15" id="myTabContent">
+            <div class="tab-pane fade active show" id="init" role="tabpanel" aria-labelledby="home-tab">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Duration</th>
+                    <th>Client has paid</th>
+                    <th>Investor must pay</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let data of initList">
+                    <td>#{{data.id}}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
+                            <img src="assets/images/avatars/thumb-1.jpg" alt="">
+                          </div>
+                          <h6 class="m-l-10 m-b-0">{{data.client}}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{data.duration}} days</td>
+                    <td>{{data.clientPay}} WEI</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <span class="badge badge-success badge-dot m-r-10"></span>
+                        <span>{{data.investorPay}} WEI</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="acceptRequest(data.id, data.investorPay)">
+                          <i class="anticon anticon-check"></i>
+                          <span class="m-l-5">Accept</span>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="media m-v-10">
-        <!-- <div class="avatar avatar-cyan avatar-icon avatar-square">
-           <i class="anticon anticon-star"></i>
-         </div>-->
-        <div class="media-body m-l-15">
-          <h3 class="mb-0">InProcess Insurances</h3>
-          <!--          <span class="text-gray font-size-13">Dev Team</span>-->
-        </div>
-      </div>
-    </div>
-    <div class="row" id="card-view2">
-      <div *ngFor="let data of processList" class="col-md-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="m-t-20 text-center">
-              <h4 class="m-t-30">{{data.id}}</h4>
-              <p>{{data.client}}</p>
+            <div class="tab-pane fade " id="InProcess" role="tabpanel" aria-labelledby="contact-tab">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Investor</th>
+                    <th>Duration</th>
+                    <th>start</th>
+                    <th>End</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let data of processList">
+                    <td>#{{data.id}}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
+                            <img src="assets/images/avatars/thumb-1.jpg" alt="">
+                          </div>
+                          <h6 class="m-l-10 m-b-0">{{data.client}}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
+                            <img src="assets/images/avatars/thumb-1.jpg" alt="">
+                          </div>
+                          <h6 class="m-l-10 m-b-0">{{data.investor}}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{data.duration}} days</td>
+                    <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                    <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                    <td>
+<!--                      <div class="text-center m-t-30">-->
+                        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="requestEvaluator(data.id)">
+<!--                          <i class="anticon anticon-check"></i>-->
+                          <span class="m-l-5">Request-Evaluator</span>
+                        </a>
+                        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="checkIfExpired(data.id)">
+<!--                          <i class="anticon anticon-check"></i>-->
+                          <span class="m-l-5">Check-expiration</span>
+                        </a>
+<!--                      </div>-->
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="requestEvaluator(data.id)">
-                <i class="anticon anticon-check"></i>
-                <span class="m-l-5">Request For Evaluation</span>
-              </a>
+            <div class="tab-pane fade " id="Waiting" role="tabpanel" aria-labelledby="contact-tab">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Investor</th>
+                    <th>Duration</th>
+                    <th>start</th>
+                    <th>End</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let data of waitingList">
+                    <td>#{{data.id}}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
+                            <img src="assets/images/avatars/thumb-1.jpg" alt="">
+                          </div>
+                          <h6 class="m-l-10 m-b-0">{{data.client}}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
+                            <img src="assets/images/avatars/thumb-1.jpg" alt="">
+                          </div>
+                          <h6 class="m-l-10 m-b-0">{{data.investor}}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{data.duration}} days</td>
+                    <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                    <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                    <td>
+                      <!--                      <div class="text-center m-t-30">-->
+                      <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="requestEvaluator(data.id)">
+                        <!--                          <i class="anticon anticon-check"></i>-->
+                        <span class="m-l-5">Request-Evaluator</span>
+                      </a>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="checkIfExpired(data.id)">
-                <i class="anticon anticon-check"></i>
-                <span class="m-l-5">Check if is expired</span>
-              </a>
+            <div class="tab-pane fade" id="Finished" role="tabpanel" aria-labelledby="profile-tab">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Duration</th>
+                    <th>Client has paid</th>
+                    <th>Investor must pay</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let data of finishList">
+                    <td>#{{data.id}}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
+                            <img src="assets/images/avatars/thumb-1.jpg" alt="">
+                          </div>
+                          <h6 class="m-l-10 m-b-0">{{data.client}}</h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{data.duration}} days</td>
+                    <td>{{data.clientPay}} WEI</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <span class="badge badge-success badge-dot m-r-10"></span>
+                        <span>{{data.investorPay}} WEI</span>
+                      </div>
+                    </td>
+                    <td>{{data.evaluator}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
+
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-md-6">
-      <div class="media m-v-10">
-        <!-- <div class="avatar avatar-cyan avatar-icon avatar-square">
-           <i class="anticon anticon-star"></i>
-         </div>-->
-        <div class="media-body m-l-15">
-          <h3 class="mb-0">finished Insurances</h3>
-          <!--          <span class="text-gray font-size-13">Dev Team</span>-->
-        </div>
-      </div>
-    </div>
-    <div class="row" id="card-view3">
-      <div *ngFor="let data of finishList" class="col-md-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="m-t-20 text-center">
-              <h4 class="m-t-30">{{data.id}}</h4>
-              <p>{{data.client}}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="media m-v-10">
-        <!-- <div class="avatar avatar-cyan avatar-icon avatar-square">
-           <i class="anticon anticon-star"></i>
-         </div>-->
-        <div class="media-body m-l-15">
-          <h3 class="mb-0">Waiting For Evaluation Insurances</h3>
-          <!--          <span class="text-gray font-size-13">Dev Team</span>-->
-        </div>
-      </div>
-    </div>
-    <div class="row" id="card-view4">
-      <div *ngFor="let data of waitingList" class="col-md-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="m-t-20 text-center">
-              <h4 class="m-t-30">{{data.id}}</h4>
-              <p>{{data.client}}</p>
-            </div>
-            <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="refundToClient(data.id)">
-                <i class="anticon anticon-check"></i>
-                <span class="m-l-5">Refund To Client</span>
-              </a>
-            </div>
-            <div class="text-center m-t-30">
-              <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="refundToInvestor(data.id)">
-                <i class="anticon anticon-check"></i>
-                <span class="m-l-5">Refund To Investor</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -183,6 +296,142 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h4>Withdraw Custom amount:</h4>
+            <div class="m-t-25">
+              <form>
+                <div class="form-row align-items-center">
+                  <div class="col-auto">
+                    <label class="sr-only" for="inlineFormInputGroup1">Username</label>
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Withdraw Amoutn in Wei</div>
+                      </div>
+                      <input type="text" class="form-control" name="duration" [(ngModel)]="withdrawAmount" id="inlineFormInputGroup3" placeholder="">
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-success mb-2" (click)="withdrawCustomAmount()">Submit</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <ul class="nav nav-tabs" id="myTab2" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="home" aria-selected="true">My Insurances
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " id="investor-tab" data-toggle="tab" href="#Investor" role="tab" aria-controls="contact" aria-selected="false">My Invests</a>
+        </li>
+
+      </ul>
+      <div class="tab-content m-t-15" id="myTabContent2">
+        <div class="tab-pane fade active show" id="client" role="tabpanel" aria-labelledby="home-tab">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Investor</th>
+                <th>Status</th>
+                <th>Duration</th>
+                <th>ClientPay</th>
+                <th>InvestorPay</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Evaluator</th>
+                <th>EvaluatorStatus</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let data of insuracesOfUser">
+                <td>#{{data.id}}</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center">
+                      <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
+                        <img src="assets/images/avatars/thumb-1.jpg" alt="">
+                      </div>
+                      <h6 class="m-l-10 m-b-0">{{data.investor}}</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>{{data.status}}</td>
+                <td>{{data.duration}} days</td>
+                <td>{{data.clientPay}} WEI</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-success badge-dot m-r-10"></span>
+                    <span>{{data.investorPay}} WEI</span>
+                  </div>
+                </td>
+                <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                <td>{{data.evaluator}} </td>
+                <td>{{data.evaluatorStatus}} </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade " id="Investor" role="tabpanel" aria-labelledby="contact-tab">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Duration</th>
+                <th>start</th>
+                <th>End</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let data of investsOfUser">
+                <td>#{{data.id}}</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center">
+                      <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
+                        <img src="assets/images/avatars/thumb-1.jpg" alt="">
+                      </div>
+                      <h6 class="m-l-10 m-b-0">{{data.client}}</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>{{data.duration}} days</td>
+                <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                <td>
+                  <!--                      <div class="text-center m-t-30">-->
+                  <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="requestEvaluator(data.id)">
+                    <!--                          <i class="anticon anticon-check"></i>-->
+                    <span class="m-l-5">Request-Evaluator</span>
+                  </a>
+                  <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="checkIfExpired(data.id)">
+                    <!--                          <i class="anticon anticon-check"></i>-->
+                    <span class="m-l-5">Check-expiration</span>
+                  </a>
+                  <!--                      </div>-->
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
   <div class="col-lg-3">
     <div class="card card-body">
@@ -208,6 +457,12 @@
       <h5>Balance</h5>
       <p>usableBalance: {{usableBalance}}</p>
       <p>lockedBalance: {{lockedBalance}}</p>
+      <div class="text-center m-t-30">
+        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="withdraw()">
+          <i class="anticon anticon-check"></i>
+          <span class="m-l-5">Withdraw</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>

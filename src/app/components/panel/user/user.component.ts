@@ -20,6 +20,9 @@ export class UserComponent implements OnInit {
   processList = [];
   finishList = [];
   waitingList = [];
+  investsOfUser = [];
+  insuracesOfUser = [];
+  withdrawAmount = 0;
   // @ts-ignore
   currentUserInsurance: {
     id,
@@ -140,41 +143,28 @@ export class UserComponent implements OnInit {
     });
   }
 
-  refundToClient = (id) => {
-    this.appService.refundToClient(id ).then(res => {
-      Swal.fire(JSON.stringify(res));
-      this.fetchInsurances();
-      // }
-    }).catch(e => {
-      Swal.fire('error', e);
-    });
-  }
 
-  refundToInvestor = (id) => {
-    this.appService.refundToInvestor(id ).then(res => {
-      Swal.fire(JSON.stringify(res));
-      this.fetchInsurances();
-      // }
-    }).catch(e => {
-      Swal.fire('error', e);
-    });
-  }
 
   // tslint:disable-next-line:typedef
   async fetchInsurances(){
     const max = await this.appService.fetchNumberOfInsurances();
+    this.initList = [];
+    this.waitingList = [];
+    this.processList = [];
+    this.finishList = [];
     for (let i = 1 ; i <= max; i++){
-      this.appService.fetchInsurance(i).then(res => {
-          if(res.status == 0){
+      this.appService.fetchInsurance(i).then((res: any ) => {
+          if (res.status == 0){
             this.initList.push(res);
           }
-        else if(res.status == 1){
+        else if (res.status == 1){
+          // res.startTime = new Date(res.startTime * 1000);
           this.processList.push(res);
         }
-          else if(res.status == 2){
+          else if (res.status == 2){
             this.waitingList.push(res);
           }
-        else if(res.status == 3){
+        else if (res.status == 3){
           this.finishList.push(res);
         }
 
@@ -183,5 +173,66 @@ export class UserComponent implements OnInit {
         // Swal.fire('error in fetch user insurance', e);
       });
     }
+  }
+
+   fetchInvestsIdsOfUser =  () => {
+      this.investsOfUser = [];
+      this.appService.fetchInvestsIdsOfUser().then((res: any ) => {
+        for (let i = 0; i < res.length; i++){
+          this.appService.fetchInsurance(i).then((resp: any ) => {
+              this.investsOfUser.push(resp);
+          }).catch(e => {
+            console.log(' error : ', e);
+          });
+        }
+
+      }).catch(e => {
+        console.log('error:', e);
+        // Swal.fire('error in fetch user insurance', e);
+      });
+  }
+
+  fetchInsuranceIdsOfUser =  () => {
+    this.insuracesOfUser = [];
+    this.appService.fetchInsuranceIdsOfUser().then((res: any ) => {
+      for (let i = 0; i < res.length; i++){
+        this.appService.fetchInsurance(i).then((resp: any ) => {
+          this.insuracesOfUser.push(resp);
+        }).catch(e => {
+          console.log(' error : ', e);
+        });
+      }
+
+    }).catch(e => {
+      console.log('error:', e);
+      // Swal.fire('error in fetch user insurance', e);
+    });
+  }
+
+  withdrawCustomAmount = () => {
+    this.appService.withdrawCustomAmount(this.withdrawAmount).then(res => {
+      Swal.fire(JSON.stringify(res));
+      this.fetchUser();
+    }).catch(e => {
+      Swal.fire('error in withdraw', e);
+    });
+  }
+
+  withdraw = () => {
+    this.appService.withdraw().then(res => {
+      Swal.fire(JSON.stringify(res));
+      this.fetchUser();
+    }).catch(e => {
+      Swal.fire('error in withdraw', e);
+    });
+  }
+
+  checkIfExpired = (id) => {
+    this.appService.checkIfIsExpired(id).then(res => {
+      Swal.fire(JSON.stringify(res));
+      this.fetchUser();
+    }).catch(e => {
+      Swal.fire('error in expire check', e);
+    });
   }
 }

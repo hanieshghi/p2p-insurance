@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import Swal from 'sweetalert2';
 import {AppService} from '../../../services/app.service';
+import {UserComponent} from '../user/user.component';
 
 @Component({
   selector: 'app-admin',
@@ -16,6 +17,8 @@ export class AdminComponent implements OnInit {
   totalUser = 0;
   evaluatorAddress: string;
   evaluatorsList = [];
+  waitingList = [];
+  contractStatus = true;
   constructor(
     private appService: AppService,
   ) {
@@ -24,10 +27,28 @@ export class AdminComponent implements OnInit {
     this.fetchRecentEvaluators();
     this.fetchUsersCount();
     this.fetchInsuranceCount();
+    this.fetchWaitingList();
+    this.fetchStatusOfContract();
   }
 
 
   ngOnInit(): void {
+  }
+
+  fetchWaitingList = async () => {
+    const max = await this.appService.fetchNumberOfInsurances();
+    this.waitingList = [];
+    for (let i = 1 ; i <= max; i++){
+      this.appService.fetchInsurance(i).then((res: any ) => {
+        if (res.status == 2){
+          this.waitingList.push(res);
+        }
+
+      }).catch(e => {
+        console.log('error:', e);
+        // Swal.fire('error in fetch user insurance', e);
+      });
+    }
   }
 
   getAccountAndBalance = () => {
@@ -49,6 +70,7 @@ export class AdminComponent implements OnInit {
     //   icon: 'success',
     // });
     this.appService.stopContract().then(res => {
+      this.fetchStatusOfContract();
       Swal.fire('ok');
     }).catch(e => {
       Swal.fire('error', e);
@@ -57,6 +79,7 @@ export class AdminComponent implements OnInit {
 
   start = () => {
     this.appService.startContract().then(res => {
+      this.fetchStatusOfContract();
       Swal.fire('ok');
     }).catch(e => {
       Swal.fire('error', e);
@@ -101,6 +124,34 @@ export class AdminComponent implements OnInit {
       console.log('totalInsurance: ', res);
     }).catch(e => {
       console.log('fetch totalInsurance error', e);
+    });
+  }
+
+  fetchStatusOfContract = () => {
+    this.appService.fetchStatusOfContract().then((res: boolean) => {
+      this.contractStatus = res;
+    }).catch(e => {
+      console.log('fetch totalInsurance error', e);
+    });
+  }
+
+  refundToClient = (id) => {
+    this.appService.refundToClient(id ).then(res => {
+      Swal.fire(JSON.stringify(res));
+      this.fetchWaitingList();
+      // }
+    }).catch(e => {
+      Swal.fire('error', e);
+    });
+  }
+
+  refundToInvestor = (id) => {
+    this.appService.refundToInvestor(id ).then(res => {
+      Swal.fire(JSON.stringify(res));
+      this.fetchWaitingList();
+      // }
+    }).catch(e => {
+      Swal.fire('error', e);
     });
   }
 
