@@ -25,12 +25,12 @@ export class AppService {
       if (typeof window.web3 !== 'undefined') {
         this.web3 = window.web3.currentProvider;
       } else {
-        this.web3 = new Web3.providers.HttpProvider('http://localhost:8545');
+        this.web3 = new Web3.providers.HttpProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`);
       }
-      console.log('transfer.service :: constructor :: window.ethereum');
+      // console.log('transfer.service :: constructor :: window.ethereum');
       window.web3 = new Web3(window.ethereum);
-      console.log('transfer.service :: constructor :: this.web3');
-      console.log(this.web3);
+      // console.log('transfer.service :: constructor :: this.web3');
+      // console.log(this.web3);
       this.enable = this.enableMetaMaskAccount();
     }
     this.adminContract.setProvider(this.web3);
@@ -47,23 +47,23 @@ export class AppService {
   }
 
   private async getAccount(): Promise<any> {
-    console.log('transfer.service :: getAccount :: start');
+    // console.log('transfer.service :: getAccount :: start');
     if (this.account == null) {
       this.account = await new Promise((resolve, reject) => {
-        console.log('transfer.service :: getAccount :: eth');
-        console.log(window.web3.eth);
+        // console.log(' eth');
+        // console.log(window.web3.eth);
         window.web3.eth.getAccounts((err, retAccount) => {
-          console.log('transfer.service :: getAccount: retAccount');
-          console.log(retAccount);
+          // console.log(' retAccount');
+          // console.log(retAccount);
           if (retAccount.length > 0) {
             this.account = retAccount[0];
             resolve(this.account);
           } else {
-            alert('transfer.service :: getAccount :: no accounts found.');
+            alert(' no accounts found.');
             reject('No accounts found.');
           }
           if (err != null) {
-            alert('transfer.service :: getAccount :: error retrieving account');
+            alert('error retrieving account');
             reject('Error retrieving account');
           }
         });
@@ -73,19 +73,19 @@ export class AppService {
   }
   public async getUserBalance(): Promise<any> {
     const account = await this.getAccount();
-    console.log('transfer.service :: getUserBalance :: account');
+    // console.log('transfer.service :: getUserBalance :: account');
     console.log(account);
     return new Promise((resolve, reject) => {
       window.web3.eth.getBalance(account, (err, balance) => {
-        console.log('transfer.service :: getUserBalance :: getBalance');
-        console.log(balance);
+        // console.log('transfer.service :: getUserBalance :: getBalance');
+        // console.log(balance);
         if (!err) {
           const retVal = {
             account,
             balance
           };
-          console.log('transfer.service :: getUserBalance :: getBalance :: retVal');
-          console.log(retVal);
+          // console.log('transfer.service :: getUserBalance :: getBalance :: retVal');
+          // console.log(retVal);
           resolve(retVal);
         } else {
           reject({account: 'error', balance: 0});
@@ -130,13 +130,13 @@ export class AppService {
   addEvaluator(newEvaluator) {
     const that = this;
     return new Promise((resolve, reject) => {
-      console.log('account: ', that.account);
+      // console.log('account: ', that.account);
       this.adminContract.deployed().then(instance => instance.addNewEvaluator(
         newEvaluator,
         {
           from: that.account
         })).then(status => {
-          console.log('status: ', status);
+          // console.log('status: ', status);
           if (status) {
           return resolve('evaluator added successfully');
         }
@@ -155,7 +155,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('fetch status: ', status);
+        // console.log('fetch status: ', status);
         if (status) {
           return resolve(JSON.stringify(status));
         }
@@ -193,7 +193,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('fetch usersCount status: ', status);
+        // console.log('fetch usersCount status: ', status);
         if (status) {
           return resolve(new this.BN(status));
         }
@@ -212,7 +212,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('fetch insuranceCount status: ', status);
+        // console.log('fetch insuranceCount status: ', status);
         if (status) {
           return resolve(new this.BN(status));
         }
@@ -231,7 +231,7 @@ export class AppService {
         {
           from: that.account, value: payAmount
         })).then(status => {
-        console.log('status: ', status);
+        // console.log('status: ', status);
         if (status) {
           return resolve('new Request added successfully');
         }
@@ -250,7 +250,7 @@ export class AppService {
         {
           from: that.account, value: amount
         })).then(status => {
-        console.log('status: ', status);
+        // console.log('status: ', status);
         if (status) {
           return resolve('Request accepted successfully');
         }
@@ -269,7 +269,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('status: ', status);
+        // console.log('status: ', status);
         if (status) {
           return resolve('evaluator set successfully');
         }
@@ -288,7 +288,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('status: ', status);
+        // console.log('status: ', status);
         if (status) {
           return resolve('refunded to client successfully');
         }
@@ -307,7 +307,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('status: ', status);
+        // console.log('status: ', status);
         if (status) {
           return resolve('refunded to investor successfully');
         }
@@ -326,7 +326,7 @@ export class AppService {
         {
           from: that.account,
         })).then(status => {
-        console.log('status: ', status);
+        // console.log('status: ', status);
         if (status) {
           return resolve(status);
         }
@@ -363,7 +363,7 @@ export class AppService {
         {
           from: that.account,
         })).then(status => {
-        console.log('invest array: ', status);
+        // console.log('invest array: ', status);
         if (status) {
           return resolve(status);
         }
@@ -381,7 +381,7 @@ export class AppService {
         {
           from: that.account,
         })).then(status => {
-        console.log('insurance array: ', status);
+        // console.log('insurance array: ', status);
         if (status) {
           return resolve(status);
         }
@@ -401,7 +401,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('status: ', status);
+        // console.log('status: ', status);
         if (status) {
           return resolve('withdrawed successfully');
         }
@@ -420,7 +420,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('status: ', status);
+        // console.log('status: ', status);
         if (status) {
           return resolve('withdrawed successfully');
         }
@@ -437,7 +437,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('expire status: ', status);
+        // console.log('expire status: ', status);
         if (status) {
           return resolve(status);
         }
@@ -447,4 +447,42 @@ export class AppService {
       });
     });
   }
+
+  // fetchStatusOfContract2 = () => {
+  //   const that = this;
+  //   return new Promise((resolve, reject) => {
+  //     // console.log("account: ", that.account);
+  //     this.insuranceContract.deployed().then(instance => instance.fetchContractStopped.call(
+  //       {
+  //         from: that.account
+  //       })).then(status => {
+  //       console.log('contrace status2: ', status);
+  //       if (status) {
+  //         return resolve(JSON.stringify(status));
+  //       }
+  //     }).catch(error => {
+  //       console.log('fetch contract status error: ', error);
+  //       return reject({status: false});
+  //     });
+  //   });
+  // }
+  //
+  // fetchStatusOfContract3 = () => {
+  //   const that = this;
+  //   return new Promise((resolve, reject) => {
+  //     // console.log("account: ", that.account);
+  //     this.adminContract.deployed().then(instance => instance.fetchStopped.call(
+  //       {
+  //         from: that.account
+  //       })).then(status => {
+  //       console.log('contrace statusssss3: ', status);
+  //       if (status) {
+  //         return resolve(JSON.stringify(status));
+  //       }
+  //     }).catch(error => {
+  //       console.log('fetch contract3 status error: ', error);
+  //       return reject({status: false});
+  //     });
+  //   });
+  // }
 }

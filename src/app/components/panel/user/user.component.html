@@ -6,7 +6,7 @@
            <i class="anticon anticon-star"></i>
          </div>-->
         <div class="media-body m-l-15">
-          <h3 class="mb-0">User Panel  {{contractIsStopped}} </h3>
+          <h3 class="mb-0">User Panel </h3>
           <!--          <span class="text-gray font-size-13">Dev Team</span>-->
         </div>
       </div>
@@ -138,11 +138,11 @@
                     <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
                     <td>
 <!--                      <div class="text-center m-t-30">-->
-                        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="requestEvaluator(data.id)">
+                        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" *ngIf="!contractIsStopped"  (click)="requestEvaluator(data.id)">
 <!--                          <i class="anticon anticon-check"></i>-->
                           <span class="m-l-5">Request-Evaluator</span>
                         </a>
-                        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="checkIfExpired(data.id)">
+                        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" *ngIf="!contractIsStopped" (click)="checkIfExpired(data.id)">
 <!--                          <i class="anticon anticon-check"></i>-->
                           <span class="m-l-5">Check-expiration</span>
                         </a>
@@ -252,7 +252,7 @@
     </div>
 
 
-    <div class="row">
+    <div class="row" *ngIf="!contractIsStopped">
       <div class="col-12">
         <div class="card">
           <div class="card-body">
@@ -459,12 +459,12 @@
       <h5>Balance</h5>
       <p>usableBalance: {{usableBalance}}</p>
       <p>lockedBalance: {{lockedBalance}}</p>
-      <div class="text-center m-t-30">
-        <a href="javascript:;" *ngIf="contractIsStopped"  class="btn btn-primary btn-tone btn-tone" (click)="withdraw()">
-          <i class="anticon anticon-check"></i>
-          <span class="m-l-5">Withdraw</span>
-        </a>
-      </div>
+<!--      <div class="text-center m-t-30">-->
+<!--        <a href="javascript:;" *ngIf="contractIsStopped"  class="btn btn-primary btn-tone btn-tone" (click)="withdraw()">-->
+<!--          <i class="anticon anticon-check"></i>-->
+<!--          <span class="m-l-5">Withdraw</span>-->
+<!--        </a>-->
+<!--      </div>-->
     </div>
   </div>
 </div>

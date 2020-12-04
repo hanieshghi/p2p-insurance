@@ -4,6 +4,10 @@ pragma solidity >=0.4.22 <0.8.0;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import './Admin.sol';
 
+/// @title A simulator for P2P Insurance
+/// @author Razieh Eshghi (Haniye)
+/// @notice You can use this contract for only the most basic simulation
+/// @dev All function calls are currently implemented without side effects
 contract P2pInsurance is Admin{
   mapping( uint => Insurance) private insurances;
   mapping(address => User) private users;
@@ -213,7 +217,7 @@ contract P2pInsurance is Admin{
   /// @dev This does not return any excess ether sent to it
   /// @param withdrawAmount amount you want to withdraw
   /// @return The balance remaining for the user
-  function withdrawCustomAmount(uint withdrawAmount)  stopInEmergency public returns (uint) {
+  function withdrawCustomAmount(uint withdrawAmount)  public returns (uint) {
     User storage user = users[msg.sender];
     require(withdrawAmount <= user.usableBalance);
     user.usableBalance -= withdrawAmount;
@@ -225,7 +229,7 @@ contract P2pInsurance is Admin{
 
   /// @notice Withdraw all balance. it works only in emergency
   /// @dev This does not return any excess ether sent to it
-  function withdraw()   onlyInEmergency public{
+  function withdraw() onlyInEmergency public{
     User storage user = users[msg.sender];
 //    require(user.usableBalance > 0);
       uint withdrawAmount = user.usableBalance;
@@ -242,9 +246,7 @@ contract P2pInsurance is Admin{
   function requestEvaluator(uint insuranceId)
   stopInEmergency
   verifyCaller(insurances[insuranceId].client)
-  // isNotExpired(insuranceId)
   isEmpty(insuranceId)
-  // checkValue(insuranceId)
   public
    returns(bool){
     require(insurances[insuranceId].evaluator == address(0));

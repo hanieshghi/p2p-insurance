@@ -57,7 +57,7 @@ export class AdminComponent implements OnInit {
     then((retAccount: any) => {
       this.account = retAccount.account;
       // that.user.balance = retAccount.balance;
-      console.log('account: ', that.account, retAccount.balance);
+      // console.log('account: ', that.account, retAccount.balance);
     }).catch(error => {
       console.log(error);
     });
@@ -85,7 +85,7 @@ export class AdminComponent implements OnInit {
 
   // tslint:disable-next-line:typedef
   addEvaluator(){
-    console.log('address: ', this.evaluatorAddress);
+    // console.log('address: ', this.evaluatorAddress);
     this.appService.addEvaluator(this.evaluatorAddress).then(res => {
       Swal.fire(JSON.stringify(res));
       this.fetchRecentEvaluators();
@@ -98,7 +98,7 @@ export class AdminComponent implements OnInit {
     this.appService.fetchRecentAddedEvaluators().then(res => {
       // @ts-ignore
       this.evaluatorsList = JSON.parse(res);
-      console.log('list of evals: ', res);
+      // console.log('list of evals: ', res);
     }).catch(e => {
       console.log('fetch error', e);
     });
@@ -108,7 +108,7 @@ export class AdminComponent implements OnInit {
     this.appService.fetchNumberOfEnrolledUsers().then(res => {
       // @ts-ignore
       this.totalUser = Number(res);
-      console.log('totalUser: ', res);
+      // console.log('totalUser: ', res);
     }).catch(e => {
       console.log('fetch totalUser error', e);
     });
@@ -118,7 +118,7 @@ export class AdminComponent implements OnInit {
     this.appService.fetchNumberOfInsurances().then(res => {
       // @ts-ignore
       this.totalInsurance = Number(res) ;
-      console.log('totalInsurance: ', res);
+      // console.log('totalInsurance: ', res);
     }).catch(e => {
       console.log('fetch totalInsurance error', e);
     });
@@ -127,11 +127,12 @@ export class AdminComponent implements OnInit {
   fetchStatusOfContract = () => {
     this.appService.fetchStatusOfContract().then((res: boolean) => {
       this.contractStatus = res;
-      console.log('contract status: ', res);
+      // console.log('contract status: ', res);
     }).catch(e => {
-      console.log('fetch contract status error', e);
+      console.log('fetch contract1 status error', e);
     });
   }
+
 
   refundToClient = (id) => {
     this.appService.refundToClient(id ).then(res => {
