@@ -8,8 +8,8 @@ contract P2pInsurance is Admin{
   mapping( uint => Insurance) private insurances;
   mapping(address => User) private users;
   mapping (address => bool) private insuredUsers;
-  mapping (address => uint[]) private userInsurancesAsClient;
-  mapping (address => uint[]) private userInsurancesAsInvestor;
+  mapping (address => uint[100]) private userInsurancesAsClient;
+  mapping (address => uint[100]) private userInsurancesAsInvestor;
   // mapping (address => bool) public enrolled;
   uint public insuranceCount;
   uint public usersCount;
@@ -123,7 +123,7 @@ contract P2pInsurance is Admin{
 
   /// @notice add new user
   /// @dev This is internal and cannot be called from outside
-  function addUser() internal stopInEmergency{
+  function addUser() internal {
     users[msg.sender] = User({
         user: msg.sender,
         id: usersCount,
@@ -138,7 +138,7 @@ contract P2pInsurance is Admin{
     emit LogUserEnrolled(msg.sender);
   }
 
-  /// @notice Add new insurance request from client
+  /// @notice Add new insurance request by client
   /// @dev insuranceId 0 is skipped.
   /// @dev duration is in day
   /// @param _duration amount you want to be insured
@@ -153,6 +153,7 @@ contract P2pInsurance is Admin{
       addUser();
     }
     require(users[msg.sender].insuranceId == 0 || insurances[users[msg.sender].insuranceId].status == Status.FINISHED);
+    require(users[msg.sender].insuranceCount < 100);
     insuranceCount += 1;
     insurances[insuranceCount] = Insurance({
       id: insuranceCount,
@@ -162,7 +163,7 @@ contract P2pInsurance is Admin{
       startTime: 0,
       expireTime: 0,
       status: Status.INIT,
-      investorPay: SafeMath.mul(_clientPay , SafeMath.div(SafeMath.mul(_duration, 12),3)) ,
+      investorPay: SafeMath.mul(_clientPay , SafeMath.mul(_duration, 4)) ,
       clientPay: _clientPay,
       evaluator: address(0),
       evaluatorStatus: EvaluatorStatus.EMPTY
@@ -171,7 +172,7 @@ contract P2pInsurance is Admin{
     user.usableBalance += msg.value - _clientPay;
     user.lockedBalance += _clientPay;
     user.insuranceId = insuranceCount;
-    userInsurancesAsClient[msg.sender][user.insuranceCount] = insuranceCount;
+    userInsurancesAsClient[msg.sender][insuranceCount] = user.insuranceId;
     user.insuranceCount += 1;
     emit LogNewRequest(msg.sender , insuranceCount , _duration );
     return insuranceCount;
@@ -184,12 +185,12 @@ contract P2pInsurance is Admin{
   stopInEmergency
   isNotOwner
   isInit(_id)
-//  isNotInsured(insurances[_id].client)
   isNotSamePerson(_id)
   hasEnoughBalance(insurances[_id].investorPay) returns(bool){
     if(users[msg.sender].user == address(0)){
       addUser();
     }
+    require(users[msg.sender].investsCount <= 100);
       Insurance storage insurance = insurances[_id];
       insurance.investor = msg.sender;
       insurance.status = Status.INPROCESS;
@@ -212,7 +213,7 @@ contract P2pInsurance is Admin{
   /// @dev This does not return any excess ether sent to it
   /// @param withdrawAmount amount you want to withdraw
   /// @return The balance remaining for the user
-  function withdrawCustomAmount(uint withdrawAmount) public stopInEmergency returns (uint) {
+  function withdrawCustomAmount(uint withdrawAmount)  stopInEmergency public returns (uint) {
     User storage user = users[msg.sender];
     require(withdrawAmount <= user.usableBalance);
     user.usableBalance -= withdrawAmount;
@@ -224,28 +225,27 @@ contract P2pInsurance is Admin{
 
   /// @notice Withdraw all balance. it works only in emergency
   /// @dev This does not return any excess ether sent to it
-  /// @return The balance remaining for the user
-  function withdraw() public onlyInEmergency returns (uint) {
+  function withdraw()   onlyInEmergency public{
     User storage user = users[msg.sender];
-    require(user.usableBalance > 0);
+//    require(user.usableBalance > 0);
       uint withdrawAmount = user.usableBalance;
     user.usableBalance = 0;
-    msg.sender.transfer(user.usableBalance);
+    msg.sender.transfer(withdrawAmount);
     emit LogWithdrawal(msg.sender, withdrawAmount, user.usableBalance);
-    return user.usableBalance;
-
   }
 
 
   /// @notice client requests for evaluation
-  /// @dev if insurance has expired, its status changes to FINISHED
+  /// @dev for simplicity not the evaluator is the owner
   /// @param insuranceId id of insurance
   /// @return false if insurance has expired otherwise returns true
-  function requestEvaluator(uint insuranceId) public stopInEmergency
+  function requestEvaluator(uint insuranceId)
+  stopInEmergency
   verifyCaller(insurances[insuranceId].client)
   // isNotExpired(insuranceId)
   isEmpty(insuranceId)
   // checkValue(insuranceId)
+  public
    returns(bool){
     require(insurances[insuranceId].evaluator == address(0));
      if(insurances[insuranceId].expireTime < now){
@@ -267,11 +267,11 @@ contract P2pInsurance is Admin{
   /// @notice evalator accepts refund to client
   /// @param insuranceId id of insurance
   /// @return true
-  function refundToClient(uint insuranceId) public
+  function refundToClient(uint insuranceId)
   stopInEmergency
   verifyCaller(insurances[insuranceId].evaluator)
   isEmpty(insuranceId)
-  isWaiting(insuranceId)
+  isWaiting(insuranceId) public
    returns(bool){
     Insurance storage insurance = insurances[insuranceId];
     insurance.evaluatorStatus = EvaluatorStatus.ACCEPTED;
@@ -291,11 +291,11 @@ contract P2pInsurance is Admin{
   /// @notice evaluator reject refund to client.
   /// @param insuranceId id of insurance
   /// @return true
-  function refundToInvestor(uint insuranceId) public
+  function refundToInvestor(uint insuranceId)
   stopInEmergency
   verifyCaller(insurances[insuranceId].evaluator)
   isEmpty(insuranceId)
-  isWaiting(insuranceId)
+  isWaiting(insuranceId) public
    returns(bool){
     Insurance storage insurance = insurances[insuranceId];
     insurance.evaluatorStatus = EvaluatorStatus.REJECTED;
@@ -317,7 +317,6 @@ contract P2pInsurance is Admin{
   function checkIfIsExpired(uint insuranceId) public
   isEmpty(insuranceId)
   isInProcess(insuranceId)
-//  isExpired(insuranceId)
    returns(bool){
     if(insurances[insuranceId].expireTime  < now){
       Insurance storage insurance = insurances[insuranceId];
@@ -339,7 +338,6 @@ contract P2pInsurance is Admin{
 
     /// @notice fetch user info by address
     /// @param _user address of user
-    /// @return id
     function fetchUser(address _user) public view returns(
         uint id, address user, uint usableBalance, uint lockedBalance, uint investsCount, uint insuranceId
     ) {
@@ -354,7 +352,6 @@ contract P2pInsurance is Admin{
 
     /// @notice fetch insurance item by id
     /// @param _id of insurance
-    /// @return id
     function fetchInsurance(uint _id) public view returns (
         uint id, address investor, address client,
         uint duration, uint startTime, uint expireTime, uint status,
@@ -374,11 +371,11 @@ contract P2pInsurance is Admin{
         return (id, investor, client, duration, startTime, expireTime, status, investorPay, clientPay, evaluator, evaluatorStatus);
     }
 
-  function fetchInvestsIdOfUser() public view returns (uint[] memory ) {
+  function fetchInvestsIdOfUser() public view returns (uint[100] memory ) {
     return userInsurancesAsInvestor[msg.sender] ;
   }
 
-  function fetchInsurancesIdOfUser() public view returns (uint[] memory ) {
+  function fetchInsurancesIdOfUser() public view returns (uint[100] memory ) {
     return userInsurancesAsClient[msg.sender] ;
   }
 

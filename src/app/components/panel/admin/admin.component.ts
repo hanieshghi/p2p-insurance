@@ -18,7 +18,7 @@ export class AdminComponent implements OnInit {
   evaluatorAddress: string;
   evaluatorsList = [];
   waitingList = [];
-  contractStatus = true;
+  contractStatus = false;
   constructor(
     private appService: AppService,
   ) {
@@ -64,23 +64,20 @@ export class AdminComponent implements OnInit {
   }
 
   stop = () => {
-    // Swal.fire({
-    //   title: 'Are you sure?',
-    //   text: 'You will not be able to recover this imaginary file!',
-    //   icon: 'success',
-    // });
+
     this.appService.stopContract().then(res => {
       this.fetchStatusOfContract();
-      Swal.fire('ok');
+      Swal.fire(res);
     }).catch(e => {
       Swal.fire('error', e);
     });
   }
 
   start = () => {
+
     this.appService.startContract().then(res => {
       this.fetchStatusOfContract();
-      Swal.fire('ok');
+      Swal.fire(res);
     }).catch(e => {
       Swal.fire('error', e);
     });
@@ -130,8 +127,9 @@ export class AdminComponent implements OnInit {
   fetchStatusOfContract = () => {
     this.appService.fetchStatusOfContract().then((res: boolean) => {
       this.contractStatus = res;
+      console.log('contract status: ', res);
     }).catch(e => {
-      console.log('fetch totalInsurance error', e);
+      console.log('fetch contract status error', e);
     });
   }
 

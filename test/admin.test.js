@@ -16,7 +16,7 @@ contract('Admin', function(accounts) {
 
     it("should turn stopped to true", async() => {
         const tx = await instance.stopContract( {from: owner})
-                
+
         const result = await instance.stopped.call()
 
         assert.equal(result, true, 'the stopped variable should be true')
@@ -25,7 +25,6 @@ contract('Admin', function(accounts) {
     it("should emit a LogStoppedChanged event when an stopped is set to true", async()=> {
         let eventEmitted = false
         const tx = await instance.stopContract({from: owner})
-        
         if (tx.logs[0].event == "LogStoppedChanged") {
             eventEmitted = true
         }
@@ -34,17 +33,19 @@ contract('Admin', function(accounts) {
     })
 
     it("should turn stopped to false", async() => {
+      await instance.stopContract( {from: owner})
         const tx = await instance.startContract( {from: owner})
-                
+
         const result = await instance.stopped.call()
 
         assert.equal(result, false, 'the stopped variable should be false')
     })
 
-    it("should emit a LogStoppedChanged event when an stopped is set to false", async()=> {
+    it("should emit a LogStoppedChanged event when  stopped is set to false", async()=> {
         let eventEmitted = false
+      await instance.stopContract( {from: owner})
         const tx = await instance.startContract({from: owner})
-        
+        // console.log(tx);
         if (tx.logs[0].event == "LogStoppedChanged") {
             eventEmitted = true
         }
@@ -63,8 +64,8 @@ contract('Admin', function(accounts) {
     it("should add new evaluator", async()=>{
 
         const tx = await instance.addNewEvaluator(alice, {from: owner})
-        const result = await instance.evaluators.call(1)
-        const result2 = await instance.validEvaluators.call(alice)
+        const result = await instance.fetchEvaluatorById.call(1)
+        const result2 = await instance.fetchStatusOfEvaluatorById.call(alice)
         assert.equal(result, alice, 'adding an evaluator should save address in evaluators')
         assert.equal(result2, true, 'adding an evaluator should validate the evaluator')
     })

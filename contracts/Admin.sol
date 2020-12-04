@@ -7,7 +7,7 @@ contract Admin {
   mapping(address => bool) internal validEvaluators;
   mapping(uint => address) internal evaluators;
   uint public counter;
-  bool public stopped = false;
+  bool public stopped;
   uint availableEvaluator;
 
   event LogStoppedChanged(bool indexed stopped);
@@ -15,8 +15,6 @@ contract Admin {
   event LogEvaluatorRemoved(address indexed evaluator);
   event LogAvailableEvaluatorChanged(uint evaluator);
 
-  modifier stopInEmergency { require(!stopped); _; }
-  modifier onlyInEmergency { require(stopped); _; }
 
   modifier isOwner(){
       require(msg.sender == owner);
@@ -31,10 +29,18 @@ contract Admin {
       require(validEvaluators[msg.sender]);
       _;
   }
+  modifier stopInEmergency() {
+    require(!stopped);
+    _;
+  }
+  modifier onlyInEmergency() {
+    require(stopped);
+    _;
+  }
   constructor() public {
     owner = msg.sender;
     counter = 1;
-
+    stopped = false;
     evaluators[0] = msg.sender;
     validEvaluators[msg.sender] = true;
   }
@@ -51,7 +57,7 @@ contract Admin {
     return stopped;
   }
 
-  function addNewEvaluator(address payable _evaluator) public isOwner returns ( bool){
+  function addNewEvaluator(address payable _evaluator) public isOwner stopInEmergency returns ( bool){
     require(!validEvaluators[_evaluator]);
     evaluators[counter] = _evaluator;
     counter += 1;
@@ -80,5 +86,13 @@ contract Admin {
       }
     }
     return recentEvaluators;
+  }
+
+  function fetchEvaluatorById(uint id) public view returns(address) {
+    return evaluators[id];
+  }
+
+  function fetchStatusOfEvaluatorById(address add) public view returns(bool) {
+    return validEvaluators[add];
   }
 }

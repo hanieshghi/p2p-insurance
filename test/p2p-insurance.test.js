@@ -20,7 +20,7 @@ contract('P2pInsurance', function(accounts) {
     const emptyAddress = '0x0000000000000000000000000000000000000000';
 
     const clientPay = "1000";
-    const investorPay = "20000";
+    const investorPay = "80000";
     const duration = "20";
 
     let instance;
@@ -31,7 +31,7 @@ contract('P2pInsurance', function(accounts) {
 
     it("should add new insurance request with the provided pay and duration and register user if the address is new", async() => {
         const tx = await instance.addNewRequest(duration, clientPay, {from: client, value: clientPay});
-                
+        // console.log('tx:',tx);
         const result = await instance.fetchInsurance.call(1);
         const user = await instance.fetchUser.call(client);
 
@@ -39,6 +39,7 @@ contract('P2pInsurance', function(accounts) {
         assert.equal(result[3].toString(10), duration, 'the duration of the last added item does not match the expected value');
         assert.equal(result[6].toString(10), 0, 'the status of the item should be "INIT", which should be declared first in the Status Enum')
         assert.equal(result[8].toString(), clientPay, 'the clientPay of the last added item does not match the expected value');
+        assert.equal(result[7].toString(), investorPay, 'the investorPay of the last added item does not match the expected value');
 
         assert.equal(user[1], client, 'the address of the last added user does not match the expected value');
         assert.equal(user[3].toString(), clientPay, 'the lockedBalance of the last added user does not match the expected value');
@@ -54,7 +55,7 @@ contract('P2pInsurance', function(accounts) {
     it("should emit a LogNewRequest event when an insurance is added", async()=> {
         let eventEmitted = false;
         const tx = await instance.addNewRequest(duration, clientPay, {from: client, value: clientPay});
-        
+
         if (tx.logs[1].event == "LogNewRequest") {
             eventEmitted = true
         }
@@ -68,8 +69,8 @@ contract('P2pInsurance', function(accounts) {
         await instance.addNewRequest(duration, clientPay, {from: client, value: clientPay});
 
 
-        await instance.acceptARequestByInvestor(1, {from: investor, value: investorPay});
-
+        const tx = await instance.acceptARequestByInvestor(1, {from: investor, value: investorPay});
+      // console.log('tx',tx);
         var clientBalanceAfter = await web3.eth.getBalance(client);
         var investorBalanceAfter = await web3.eth.getBalance(investor);
 
@@ -109,7 +110,7 @@ contract('P2pInsurance', function(accounts) {
         await instance.addNewRequest(duration, clientPay, {from: client, value: clientPay});
         await instance.acceptARequestByInvestor(1, {from: investor, value: investorPay});
         await instance.requestEvaluator(1, {from: client});
-	
+
         const result = await instance.fetchInsurance.call(1);
         // assert.equal(tx, true, 'the evaluator should return true');
         assert.notEqual(result[9], emptyAddress, 'the evaluator Address should not be 0')

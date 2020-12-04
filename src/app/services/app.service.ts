@@ -174,12 +174,12 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('contrace status: ', status);
+        // console.log('contrace status: ', status);
         if (status) {
           return resolve(JSON.stringify(status));
         }
       }).catch(error => {
-        console.log('fetch contrace status error: ', error);
+        console.log('fetch contract status error: ', error);
         return reject({status: false});
       });
     });
@@ -437,7 +437,7 @@ export class AppService {
         {
           from: that.account
         })).then(status => {
-        console.log('status: ', status);
+        console.log('expire status: ', status);
         if (status) {
           return resolve(status);
         }

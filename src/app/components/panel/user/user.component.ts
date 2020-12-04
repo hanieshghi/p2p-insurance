@@ -23,6 +23,7 @@ export class UserComponent implements OnInit {
   investsOfUser = [];
   insuracesOfUser = [];
   withdrawAmount = 0;
+  contractIsStopped = false;
   // @ts-ignore
   currentUserInsurance: {
     id,
@@ -44,6 +45,7 @@ export class UserComponent implements OnInit {
     this.getAccountAndBalance();
     this.fetchUser();
     this.fetchInsurances();
+    this.fetchStatusOfContract();
   }
 
   ngOnInit(): void {
@@ -74,16 +76,19 @@ export class UserComponent implements OnInit {
       this.insuranceId = res.insuranceId;
       // if(this.insuranceId !== '0'){
       this.fetchUserInsurance();
+      this.fetchInsuranceIdsOfUser();
+      this.fetchInvestsIdsOfUser();
       // }
     }).catch(e => {
-      Swal.fire('error in fetch userInfo', e);
+      console.log('error in fetch userInfo', e);
+      // Swal.fire('error in fetch userInfo', e);
     });
   }
 
   fetchUserInsurance = () => {
     this.appService.fetchInsurance(this.insuranceId).then(res => {
       // Swal.fire(JSON.stringify(res));
-      console.log('response', res);
+      // console.log('response', res);
       // @ts-ignore
       this.currentUserInsurance.id = res.id;
       // @ts-ignore
@@ -117,6 +122,7 @@ export class UserComponent implements OnInit {
       Swal.fire(JSON.stringify(res));
       this.fetchUser();
       this.fetchUserInsurance();
+      this.fetchInsurances();
       // }
     }).catch(e => {
       Swal.fire('error in add new Req', e);
@@ -137,6 +143,7 @@ export class UserComponent implements OnInit {
     this.appService.requestForEvaluation(id ).then(res => {
       Swal.fire(JSON.stringify(res));
       this.fetchUser();
+      this.fetchInsurances();
       // }
     }).catch(e => {
       Swal.fire('error', e);
@@ -179,11 +186,13 @@ export class UserComponent implements OnInit {
       this.investsOfUser = [];
       this.appService.fetchInvestsIdsOfUser().then((res: any ) => {
         for (let i = 0; i < res.length; i++){
-          this.appService.fetchInsurance(i).then((resp: any ) => {
-              this.investsOfUser.push(resp);
-          }).catch(e => {
-            console.log(' error : ', e);
-          });
+          if(res[i] != 0){
+            this.appService.fetchInsurance(res[i]).then((resp: any ) => {
+                this.investsOfUser.push(resp);
+            }).catch(e => {
+              console.log(' error : ', e);
+            });
+          }
         }
 
       }).catch(e => {
@@ -196,11 +205,13 @@ export class UserComponent implements OnInit {
     this.insuracesOfUser = [];
     this.appService.fetchInsuranceIdsOfUser().then((res: any ) => {
       for (let i = 0; i < res.length; i++){
-        this.appService.fetchInsurance(i).then((resp: any ) => {
-          this.insuracesOfUser.push(resp);
-        }).catch(e => {
-          console.log(' error : ', e);
-        });
+        if(res[i] != 0){
+          this.appService.fetchInsurance(res[i]).then((resp: any ) => {
+            this.insuracesOfUser.push(resp);
+          }).catch(e => {
+            console.log(' error : ', e);
+          });
+        }
       }
 
     }).catch(e => {
@@ -233,6 +244,14 @@ export class UserComponent implements OnInit {
       this.fetchUser();
     }).catch(e => {
       Swal.fire('error in expire check', e);
+    });
+  }
+  fetchStatusOfContract = () => {
+    this.appService.fetchStatusOfContract().then((res: boolean) => {
+      this.contractIsStopped = res;
+      console.log('contract status: ', res);
+    }).catch(e => {
+      console.log('fetch totalInsurance error', e);
     });
   }
 }

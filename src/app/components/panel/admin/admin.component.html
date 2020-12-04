@@ -37,17 +37,23 @@
     <div class="card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <p class="m-b-0">Contract Status</p>
-            <h2 class="m-b-0">
-              <span>{{contractStatus}}</span>
-            </h2>
+          <div *ngIf="contractStatus">
+            <h2 class="m-b-0">Contract is stopped</h2>
+<!--            <h2 class="m-b-0">-->
+<!--              <span>{{contractStatus}}</span>-->
+<!--            </h2>-->
           </div>
-          <div >
-            <button type="submit" class="btn btn-success" (click)="start()">START</button>
+          <div *ngIf="!contractStatus">
+            <h2 class="m-b-0">Contract is running</h2>
+<!--            <h2 class="m-b-0">-->
+<!--              <span>{{contractStatus}}</span>-->
+<!--            </h2>-->
           </div>
-          <div >
-            <button type="submit" class="btn btn-success" (click)="stop()">STOP</button>
+          <div *ngIf="contractStatus" >
+            <button type="submit" class="btn btn-success"  (click)="start()">START</button>
+          </div>
+          <div *ngIf="!contractStatus">
+            <button type="submit" class="btn btn-success"   (click)="stop()">STOP</button>
           </div>
         </div>
       </div>
@@ -191,25 +197,27 @@
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Client</th>
-              <th scope="col">Action</th>
+              <th scope="col">Investor</th>
+              <th scope="col">Action1</th>
+              <th scope="col">Action2</th>
               <!--              <th scope="col">Handle</th>-->
             </tr>
             </thead>
             <tbody >
             <tr *ngFor="let data of waitingList">
-              <th scope="row">1</th>
-              <td>{{data.id}}</td>
+              <th scope="row">{{data.id}}</th>
               <td>{{data.client}}</td>
+              <td>{{data.investor}}</td>
               <td>
                 <div class="d-flex align-items-center">
                   <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="refundToClient(data.id)">
                     <i class="anticon anticon-check"></i>
-                    <span class="m-l-5">Accept</span>
+                    <span class="m-l-5">Refund to Client</span>
                   </a>
                 </div>
               </td>
               <td>
-                <div class="text-center m-t-30">
+                <div class="d-flex align-items-center">
                   <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="refundToInvestor(data.id)">
                     <i class="anticon anticon-check"></i>
                     <span class="m-l-5">Refund To Investor</span>

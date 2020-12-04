@@ -6,7 +6,7 @@
            <i class="anticon anticon-star"></i>
          </div>-->
         <div class="media-body m-l-15">
-          <h3 class="mb-0">User Panel</h3>
+          <h3 class="mb-0">User Panel  {{contractIsStopped}} </h3>
           <!--          <span class="text-gray font-size-13">Dev Team</span>-->
         </div>
       </div>
@@ -161,10 +161,9 @@
                     <th>ID</th>
                     <th>Client</th>
                     <th>Investor</th>
-                    <th>Duration</th>
-                    <th>start</th>
-                    <th>End</th>
-                    <th>Action</th>
+                    <th>Evaluator</th>
+                    <th>ClientPay</th>
+                    <th>InvestorPay</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -190,16 +189,9 @@
                         </div>
                       </div>
                     </td>
-                    <td>{{data.duration}} days</td>
-                    <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
-                    <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
-                    <td>
-                      <!--                      <div class="text-center m-t-30">-->
-                      <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="requestEvaluator(data.id)">
-                        <!--                          <i class="anticon anticon-check"></i>-->
-                        <span class="m-l-5">Request-Evaluator</span>
-                      </a>
-                    </td>
+                    <td>{{data.evaluator}}</td>
+                    <td>{{data.clientPay}} </td>
+                    <td>{{data.investorPay}} </td>
                   </tr>
                   </tbody>
                 </table>
@@ -212,10 +204,14 @@
                   <tr>
                     <th>ID</th>
                     <th>Client</th>
-                    <th>Duration</th>
-                    <th>Client has paid</th>
-                    <th>Investor must pay</th>
-                    <th>Action</th>
+                    <th>Investor</th>
+                    <th>duration</th>
+                    <th>Start</th>
+                    <th>Expire</th>
+                    <th>ClientPay</th>
+                    <th>InvestorPay</th>
+                    <th>Evaluator</th>
+                    <th>Evaluator Status</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -231,7 +227,10 @@
                         </div>
                       </div>
                     </td>
+                    <td>{{data.investor}} </td>
                     <td>{{data.duration}} days</td>
+                    <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                    <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
                     <td>{{data.clientPay}} WEI</td>
                     <td>
                       <div class="d-flex align-items-center">
@@ -240,6 +239,7 @@
                       </div>
                     </td>
                     <td>{{data.evaluator}}</td>
+                    <td>{{data.evaluatorStatus}}</td>
                   </tr>
                   </tbody>
                 </table>
@@ -308,7 +308,7 @@
                     <label class="sr-only" for="inlineFormInputGroup1">Username</label>
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
-                        <div class="input-group-text">Withdraw Amoutn in Wei</div>
+                        <div class="input-group-text">Withdraw Amount in Wei</div>
                       </div>
                       <input type="text" class="form-control" name="duration" [(ngModel)]="withdrawAmount" id="inlineFormInputGroup3" placeholder="">
                     </div>
@@ -341,15 +341,15 @@
               <thead>
               <tr>
                 <th>ID</th>
+                <th>Client</th>
                 <th>Investor</th>
-                <th>Status</th>
-                <th>Duration</th>
+                <th>duration</th>
+                <th>Start</th>
+                <th>Expire</th>
                 <th>ClientPay</th>
                 <th>InvestorPay</th>
-                <th>Start</th>
-                <th>End</th>
                 <th>Evaluator</th>
-                <th>EvaluatorStatus</th>
+                <th>Evaluator Status</th>
               </tr>
               </thead>
               <tbody>
@@ -361,12 +361,14 @@
                       <div class="avatar avatar-image" style="height: 30px; min-width: 30px; max-width:30px">
                         <img src="assets/images/avatars/thumb-1.jpg" alt="">
                       </div>
-                      <h6 class="m-l-10 m-b-0">{{data.investor}}</h6>
+                      <h6 class="m-l-10 m-b-0">{{data.client}}</h6>
                     </div>
                   </div>
                 </td>
-                <td>{{data.status}}</td>
+                <td>{{data.investor}} </td>
                 <td>{{data.duration}} days</td>
+                <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
                 <td>{{data.clientPay}} WEI</td>
                 <td>
                   <div class="d-flex align-items-center">
@@ -374,10 +376,8 @@
                     <span>{{data.investorPay}} WEI</span>
                   </div>
                 </td>
-                <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
-                <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
-                <td>{{data.evaluator}} </td>
-                <td>{{data.evaluatorStatus}} </td>
+                <td>{{data.evaluator}}</td>
+                <td>{{data.evaluatorStatus}}</td>
               </tr>
               </tbody>
             </table>
@@ -390,10 +390,14 @@
               <tr>
                 <th>ID</th>
                 <th>Client</th>
-                <th>Duration</th>
-                <th>start</th>
-                <th>End</th>
-                <th>Action</th>
+                <th>Investor</th>
+                <th>duration</th>
+                <th>Start</th>
+                <th>Expire</th>
+                <th>ClientPay</th>
+                <th>InvestorPay</th>
+                <th>Evaluator</th>
+                <th>Evaluator Status</th>
               </tr>
               </thead>
               <tbody>
@@ -409,21 +413,19 @@
                     </div>
                   </div>
                 </td>
+                <td>{{data.investor}} </td>
                 <td>{{data.duration}} days</td>
                 <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
                 <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
+                <td>{{data.clientPay}} WEI</td>
                 <td>
-                  <!--                      <div class="text-center m-t-30">-->
-                  <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="requestEvaluator(data.id)">
-                    <!--                          <i class="anticon anticon-check"></i>-->
-                    <span class="m-l-5">Request-Evaluator</span>
-                  </a>
-                  <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="checkIfExpired(data.id)">
-                    <!--                          <i class="anticon anticon-check"></i>-->
-                    <span class="m-l-5">Check-expiration</span>
-                  </a>
-                  <!--                      </div>-->
+                  <div class="d-flex align-items-center">
+                    <span class="badge badge-success badge-dot m-r-10"></span>
+                    <span>{{data.investorPay}} WEI</span>
+                  </div>
                 </td>
+                <td>{{data.evaluator}}</td>
+                <td>{{data.evaluatorStatus}}</td>
               </tr>
               </tbody>
             </table>
@@ -458,7 +460,7 @@
       <p>usableBalance: {{usableBalance}}</p>
       <p>lockedBalance: {{lockedBalance}}</p>
       <div class="text-center m-t-30">
-        <a href="javascript:;" class="btn btn-primary btn-tone btn-tone" (click)="withdraw()">
+        <a href="javascript:;" *ngIf="contractIsStopped"  class="btn btn-primary btn-tone btn-tone" (click)="withdraw()">
           <i class="anticon anticon-check"></i>
           <span class="m-l-5">Withdraw</span>
         </a>
