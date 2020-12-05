@@ -377,7 +377,9 @@
                     <span>{{data.investorPay}} WEI</span>
                   </div>
                 </td>
-                <td>{{data.status}}</td>
+                <td [ngSwitch]="data.status">
+                  <span *ngSwitchCase="'3'">Success</span>
+                </td>
                 <td>{{data.evaluator}}</td>
                 <td>{{data.evaluatorStatus}}</td>
               </tr>

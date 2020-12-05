@@ -25,7 +25,7 @@ export class AppService {
       if (typeof window.web3 !== 'undefined') {
         this.web3 = window.web3.currentProvider;
       } else {
-        this.web3 = new Web3.providers.HttpProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`);
+        this.web3 = new Web3.providers.HttpProvider(`https://ropsten.infura.io/v3/9eaf1cf7417948a4887f432f1880162f`);
       }
       // console.log('transfer.service :: constructor :: window.ethereum');
       window.web3 = new Web3(window.ethereum);
