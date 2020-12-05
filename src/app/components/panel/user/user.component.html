@@ -239,7 +239,11 @@
                       </div>
                     </td>
                     <td>{{data.evaluator}}</td>
-                    <td>{{data.evaluatorStatus}}</td>
+                    <td [ngSwitch]="data.evaluatorStatus">
+                      <span *ngSwitchCase="'2'">RefundToInvestor</span>
+                      <span *ngSwitchCase="'1'">RefundToClient</span>
+                      <span *ngSwitchCase="'0'">Empty</span>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
@@ -378,10 +382,18 @@
                   </div>
                 </td>
                 <td [ngSwitch]="data.status">
-                  <span *ngSwitchCase="'3'">Success</span>
+                  <span *ngSwitchCase="'3'">Finished</span>
+                  <span *ngSwitchCase="'2'">wait evaluation</span>
+                  <span *ngSwitchCase="'1'">In Process</span>
+                  <span *ngSwitchCase="'0'">Init</span>
                 </td>
                 <td>{{data.evaluator}}</td>
-                <td>{{data.evaluatorStatus}}</td>
+                <td [ngSwitch]="data.evaluatorStatus">
+                  <span *ngSwitchCase="'2'">RefundToInvestor</span>
+                  <span *ngSwitchCase="'1'">RefundToClient</span>
+                  <span *ngSwitchCase="'0'">Empty</span>
+                </td>
+
               </tr>
               </tbody>
             </table>
@@ -429,9 +441,18 @@
                     <span>{{data.investorPay}} WEI</span>
                   </div>
                 </td>
-                <td>{{data.status}}</td>
+                <td [ngSwitch]="data.status">
+                  <span *ngSwitchCase="'3'">Finished</span>
+                  <span *ngSwitchCase="'2'">wait evaluation</span>
+                  <span *ngSwitchCase="'1'">In Process</span>
+                  <span *ngSwitchCase="'0'">Init</span>
+                </td>
                 <td>{{data.evaluator}}</td>
-                <td>{{data.evaluatorStatus}}</td>
+                <td [ngSwitch]="data.evaluatorStatus">
+                  <span *ngSwitchCase="'2'">RefundToInvestor</span>
+                  <span *ngSwitchCase="'1'">RefundToClient</span>
+                  <span *ngSwitchCase="'0'">Empty</span>
+                </td>
               </tr>
               </tbody>
             </table>
@@ -450,15 +471,15 @@
       <div>
         <div class="m-t-20 text-left">
           <p>id: {{currentUserInsurance.id}}</p>
-          <p>startTime: {{currentUserInsurance.startTime}}</p>
-          <p>expireTime: {{currentUserInsurance.expireTime}}</p>
-          <p>duration: {{currentUserInsurance.duration}} days</p>
+<!--          <p>startTime: {{currentUserInsurance.startTime}}</p>-->
+<!--          <p>expireTime: {{currentUserInsurance.expireTime}}</p>-->
+<!--          <p>duration: {{currentUserInsurance.duration}} days</p>-->
           <p>investor: {{currentUserInsurance.investor}}</p>
           <p>client pay: {{currentUserInsurance.clientPay}}</p>
           <p>investorPay: {{currentUserInsurance.investorPay}}</p>
-          <p>status: {{currentUserInsurance.status}}</p>
-          <p>evaluator: {{currentUserInsurance.evaluator}}</p>
-          <p>evaluator status: {{currentUserInsurance.evaluatorStatus}}</p>
+<!--          <p>status: {{currentUserInsurance.status}}</p>-->
+<!--          <p>evaluator: {{currentUserInsurance.evaluator}}</p>-->
+<!--          <p>evaluator status: {{currentUserInsurance.evaluatorStatus}}</p>-->
         </div>
       </div>
       <hr>
