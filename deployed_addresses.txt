@@ -1,4 +1,4 @@
 testnet: Ropsten
 
-address of Admin Contract: '0x1542779B139b0A877055C4e43Db70F8Bd8D5A2DA'
-address of P2pInsurance Contract: '0xc2fb643F2bf0ddCacfd46C4ab33c7DC5974fea83'
+address of Admin Contract: '0x2D182704c979D3AfcBcFFEA1cB4831138BB0E060'
+address of P2pInsurance Contract: '0xe48e3545224772dd729EF6575f30c83c3E434783'

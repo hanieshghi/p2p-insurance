@@ -66,7 +66,8 @@ export class AdminComponent implements OnInit {
   stop = () => {
 
     this.appService.stopContract().then(res => {
-      this.fetchStatusOfContract();
+      // this.fetchStatusOfContract();
+      this.contractStatus = !this.contractStatus;
       Swal.fire(res);
     }).catch(e => {
       Swal.fire('error', e);
@@ -76,7 +77,8 @@ export class AdminComponent implements OnInit {
   start = () => {
 
     this.appService.startContract().then(res => {
-      this.fetchStatusOfContract();
+      // this.fetchStatusOfContract();
+      this.contractStatus = !this.contractStatus;
       Swal.fire(res);
     }).catch(e => {
       Swal.fire('error', e);

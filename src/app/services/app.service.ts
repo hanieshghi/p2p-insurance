@@ -33,7 +33,7 @@ export class AppService {
       // console.log(this.web3);
       this.enable = this.enableMetaMaskAccount();
     }
-    this.adminContract.setProvider(this.web3);
+    this.insuranceContract.setProvider(this.web3);
     this.insuranceContract.setProvider(this.web3);
     this.BN = Web3.utils.BN;
   }
@@ -99,7 +99,7 @@ export class AppService {
   stopContract() {
     const that = this;
     return new Promise((resolve, reject) => {
-      this.adminContract.deployed().then(instance => instance.stopContract({from: that.account}))
+      this.insuranceContract.deployed().then(instance => instance.stopContract({from: that.account}))
         .then(status => {
         if (status) {
           return resolve('contract stopped successfully');
@@ -114,7 +114,7 @@ export class AppService {
   startContract = () => {
     const that = this;
     return new Promise((resolve, reject) => {
-      this.adminContract.deployed().then(instance => instance.startContract({from: that.account}))
+      this.insuranceContract.deployed().then(instance => instance.startContract({from: that.account}))
         .then(status => {
           if (status) {
             return resolve('contract started successfully');
@@ -131,7 +131,7 @@ export class AppService {
     const that = this;
     return new Promise((resolve, reject) => {
       // console.log('account: ', that.account);
-      this.adminContract.deployed().then(instance => instance.addNewEvaluator(
+      this.insuranceContract.deployed().then(instance => instance.addNewEvaluator(
         newEvaluator,
         {
           from: that.account
@@ -151,7 +151,7 @@ export class AppService {
     const that = this;
     return new Promise((resolve, reject) => {
       // console.log("account: ", that.account);
-      this.adminContract.deployed().then(instance => instance.fetchRecentlyAddedEvaluators.call(
+      this.insuranceContract.deployed().then(instance => instance.fetchRecentlyAddedEvaluators.call(
         {
           from: that.account
         })).then(status => {
@@ -170,7 +170,7 @@ export class AppService {
     const that = this;
     return new Promise((resolve, reject) => {
       // console.log("account: ", that.account);
-      this.adminContract.deployed().then(instance => instance.stopped.call(
+      this.insuranceContract.deployed().then(instance => instance.stopped.call(
         {
           from: that.account
         })).then(status => {
