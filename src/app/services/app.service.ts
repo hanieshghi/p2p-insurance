@@ -224,6 +224,7 @@ export class AppService {
   }
 
   addNewRequest = (duration, payAmount) => {
+    payAmount = Web3.utils.toWei(payAmount);
     const that = this;
     return new Promise((resolve, reject) => {
       this.insuranceContract.deployed().then(instance => instance.addNewRequest(
@@ -394,6 +395,7 @@ export class AppService {
 
   // in normal mode
   withdrawCustomAmount = (amount) => {
+    amount = Web3.utils.toWei(amount);
     const that = this;
     return new Promise((resolve, reject) => {
       this.insuranceContract.deployed().then(instance => instance.withdrawCustomAmount(

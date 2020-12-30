@@ -76,11 +76,11 @@
                       </div>
                     </td>
                     <td>{{data.duration}} days</td>
-                    <td>{{data.clientPay}} WEI</td>
+                    <td>{{data.clientPay / 1000000000000000000}} </td>
                     <td>
                       <div class="d-flex align-items-center">
                         <span class="badge badge-success badge-dot m-r-10"></span>
-                        <span>{{data.investorPay}} WEI</span>
+                        <span>{{data.investorPay / 1000000000000000000}} </span>
                       </div>
                     </td>
                     <td>
@@ -190,8 +190,8 @@
                       </div>
                     </td>
                     <td>{{data.evaluator}}</td>
-                    <td>{{data.clientPay}} </td>
-                    <td>{{data.investorPay}} </td>
+                    <td>{{data.clientPay / 1000000000000000000}} </td>
+                    <td>{{data.investorPay / 1000000000000000000}} </td>
                   </tr>
                   </tbody>
                 </table>
@@ -231,11 +231,11 @@
                     <td>{{data.duration}} days</td>
                     <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
                     <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
-                    <td>{{data.clientPay}} WEI</td>
+                    <td>{{data.clientPay / 1000000000000000000}} </td>
                     <td>
                       <div class="d-flex align-items-center">
                         <span class="badge badge-success badge-dot m-r-10"></span>
-                        <span>{{data.investorPay}} WEI</span>
+                        <span>{{data.investorPay / 1000000000000000000}} </span>
                       </div>
                     </td>
                     <td>{{data.evaluator}}</td>
@@ -374,11 +374,11 @@
                 <td>{{data.duration}} days</td>
                 <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
                 <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
-                <td>{{data.clientPay}} WEI</td>
+                <td>{{data.clientPay / 1000000000000000000}} </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <span class="badge badge-success badge-dot m-r-10"></span>
-                    <span>{{data.investorPay}} WEI</span>
+                    <span>{{data.investorPay / 1000000000000000000}} </span>
                   </div>
                 </td>
                 <td [ngSwitch]="data.status">
@@ -434,11 +434,11 @@
                 <td>{{data.duration}} days</td>
                 <td>{{data.startTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
                 <td>{{data.expireTime * 1000 | date: 'yyyy-MM-dd hh:mm'}} </td>
-                <td>{{data.clientPay}} WEI</td>
+                <td>{{data.clientPay / 1000000000000000000}} </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <span class="badge badge-success badge-dot m-r-10"></span>
-                    <span>{{data.investorPay}} WEI</span>
+                    <span>{{data.investorPay / 1000000000000000000}} </span>
                   </div>
                 </td>
                 <td [ngSwitch]="data.status">

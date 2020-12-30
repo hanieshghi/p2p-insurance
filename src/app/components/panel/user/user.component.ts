@@ -74,9 +74,9 @@ export class UserComponent implements OnInit {
       // Swal.fire(JSON.stringify(res));
       // console.log('res', res);
       // @ts-ignore
-      this.usableBalance = res.usableBalance;
+      this.usableBalance = res.usableBalance / 1000000000000000000;
       // @ts-ignore
-      this.lockedBalance = res.lockedBalance;
+      this.lockedBalance = res.lockedBalance / 1000000000000000000;
       // @ts-ignore
       this.insuranceId = res.insuranceId;
       // if(this.insuranceId !== '0'){
@@ -105,9 +105,9 @@ export class UserComponent implements OnInit {
       // @ts-ignore
       this.currentUserInsurance.expireTime = new Date(res.expireTime * 1000);
       // @ts-ignore
-      this.currentUserInsurance.clientPay = res.clientPay;
+      this.currentUserInsurance.clientPay = res.clientPay / 1000000000000000000;
       // @ts-ignore
-      this.currentUserInsurance.investorPay = res.investorPay;
+      this.currentUserInsurance.investorPay = res.investorPay / 1000000000000000000;
       // @ts-ignore
       this.currentUserInsurance.status = res.status;
       // @ts-ignore
@@ -121,9 +121,8 @@ export class UserComponent implements OnInit {
       Swal.fire('error in fetch user insurance', e);
     });
   }
-
   addRequest = () => {
-    this.appService.addNewRequest(this.duration, this.clientPay).then(res => {
+    this.appService.addNewRequest(this.duration, this.clientPay ).then(res => {
       Swal.fire(JSON.stringify(res));
       this.fetchUser();
       this.fetchUserInsurance();
